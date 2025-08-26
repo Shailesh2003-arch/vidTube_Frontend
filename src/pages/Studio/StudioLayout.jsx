@@ -17,14 +17,14 @@ export default function StudioLayout() {
   const toggleSidebar = () => setIsOpen(!isOpen);
 
   return (
-    <div className="flex min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white transition-colors duration-300">
+    <div className="flex h-screen bg-white dark:bg-gray-900 text-black dark:text-white transition-colors duration-300">
       {/* Sidebar */}
       <aside
         className={`fixed md:static z-40 inset-y-0 left-0 w-60 transform 
-        bg-gray-100 dark:bg-gray-800 p-4 flex flex-col gap-4 
-        transition-transform duration-300 
-        ${isOpen ? "translate-x-0" : "-translate-x-full"} 
-        md:translate-x-0`}
+      bg-gray-100 dark:bg-gray-800 p-4 flex flex-col gap-4 
+      transition-transform duration-300 
+      ${isOpen ? "translate-x-0" : "-translate-x-full"} 
+      md:translate-x-0`}
       >
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-bold">Studio</h2>
@@ -49,7 +49,6 @@ export default function StudioLayout() {
               label: "Content",
               icon: <Video size={18} />,
             },
-
             {
               to: "/studio/analytics",
               label: "Analytics",
@@ -74,16 +73,19 @@ export default function StudioLayout() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-6">
+      <main className="flex-1 flex flex-col">
         {/* Hamburger (mobile only) */}
         <button
           onClick={toggleSidebar}
-          className="md:hidden mb-4 text-gray-700 dark:text-gray-300"
+          className="md:hidden p-4 text-gray-700 dark:text-gray-300"
         >
           <Menu size={24} />
         </button>
 
-        <Outlet />
+        {/* Scrollable outlet container */}
+        <div className="flex-1 overflow-y-auto p-6">
+          <Outlet />
+        </div>
       </main>
     </div>
   );

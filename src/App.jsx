@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import StudioLayout from "./pages/studio/StudioLayout";
 import VideosPage from "./pages/Studio/VideosPage";
 import CommunityPostPage from "./pages/Studio/CommunityPostPage";
-import PlaylistPage from "./pages/Studio/PlaylistPage";
+import PlaylistDetailsPage from "./pages/Studio/PlayListDetailsPage";
 function App() {
   const [themeMode, setThemeMode] = useState("light");
 
@@ -45,8 +45,9 @@ function App() {
               {/* studio */}
               <Route path="/studio" element={<StudioLayout />}>
                 <Route path="videos" element={<VideosPage />} />
-                <Route path="playlists" element={<PlaylistPage />} />
+                {/* <Route path="playlists" element={<PlaylistPage />} /> */}
                 <Route path="community" element={<CommunityPostPage />} />
+                <Route path="playlists/:id" element={<PlaylistDetailsPage />} />
               </Route>
             </Routes>
           </BrowserRouter>
