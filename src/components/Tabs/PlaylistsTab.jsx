@@ -14,9 +14,9 @@ export default function PlaylistsTab() {
   if (error) return <p>{error.message}</p>;
 
   return (
-    <div className="p-4">
+    <div className="flex flex-col h-full p-4">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-4 flex-none">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
           Playlists
         </h2>
@@ -31,34 +31,36 @@ export default function PlaylistsTab() {
       {console.log(playlists.length)}
       {console.log(playlists)}
       {/* Empty State */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {playlists.map((playlist) => (
-          <Link
-            key={playlist._id}
-            to={`/studio/playlists/${playlist._id}`} // 👈 route to detail page
-            className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow hover:shadow-md transition cursor-pointer"
-          >
-            <div className="aspect-video bg-gray-200 dark:bg-gray-700 rounded-t-lg flex items-center justify-center">
-              {playlist.thumbnail ? (
-                <img
-                  src={playlist.thumbnail}
-                  alt={playlist.title}
-                  className="w-full h-full object-cover rounded-t-lg"
-                />
-              ) : (
-                <Folder size={32} className="text-gray-500" />
-              )}
-            </div>
-            <div className="p-3">
-              <h3 className="font-medium text-gray-900 dark:text-gray-100 truncate">
-                {playlist.name}
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {playlist.videos.length || 0} videos
-              </p>
-            </div>
-          </Link>
-        ))}
+      <div className="flex-1 overflow-y-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 ">
+          {playlists.map((playlist) => (
+            <Link
+              key={playlist._id}
+              to={`/studio/playlists/${playlist._id}`} // 👈 route to detail page
+              className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow hover:shadow-md transition cursor-pointer"
+            >
+              <div className="aspect-video bg-gray-200 dark:bg-gray-700 rounded-t-lg flex items-center justify-center">
+                {playlist.thumbnail ? (
+                  <img
+                    src={playlist.thumbnail}
+                    alt={playlist.title}
+                    className="w-full h-full object-cover rounded-t-lg"
+                  />
+                ) : (
+                  <Folder size={32} className="text-gray-500" />
+                )}
+              </div>
+              <div className="p-3">
+                <h3 className="font-medium text-gray-900 dark:text-gray-100 truncate">
+                  {playlist.name}
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {playlist.videos.length || 0} videos
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
       {/* Playlist Modal */}
       {isUploadPlaylistModalOpen && (

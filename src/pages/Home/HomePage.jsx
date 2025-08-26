@@ -21,8 +21,6 @@ export const HomePage = () => {
       );
       const data = await res.json();
       console.log(data);
-      // console.log(data);
-      // setVideo(data.videos);
       if (data?.videos?.length > 0) {
         setVideos((prev) => {
           const combined = [...prev, ...data.videos];
@@ -46,9 +44,9 @@ export const HomePage = () => {
   }, [page]);
 
   return (
-    <div className="flex">
+    <div className="flex h-screen ">
       {/* Main content */}
-      <div className="flex-1 p-4 items-center justify-between mb-4 bg-white dark:bg-gray-900 text-black dark:text-white">
+      <div className="flex-1 p-4 flex flex-col ">
         <div className="flex items-end justify-end gap-4">
           {/* Upload Button */}
           <Link
