@@ -2,6 +2,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { InputField } from "../../components/auth-components/InputField";
 function AuthForm() {
   const [isLogin, setIsLogin] = useState(false);
   const [userData, setUserData] = useState({
@@ -106,6 +107,13 @@ function AuthForm() {
     }
   };
 
+  const fields = [
+    { label: "Username", name: "username", type: "text", onlyFor: "register" },
+    { label: "Full Name", name: "fullName", type: "text", onlyFor: "register" },
+    { label: "Email", name: "email", type: "email", onlyFor: "both" },
+    { label: "Password", name: "password", type: "password", onlyFor: "both" },
+  ];
+
   return (
     <div className="min-h-svh flex items-center justify-center p-4">
       <form
@@ -114,80 +122,22 @@ function AuthForm() {
       >
         <h1 className="font-bold text-xl">{isLogin ? "Login" : "Register"}</h1>
 
-        {!isLogin && (
-          <div>
-            <label className="block font-medium" htmlFor="username">
-              Username
-            </label>
-            <input
-              type="text"
-              name="username"
-              autoComplete="off"
-              value={userData.username}
+        {fields
+          .filter(
+            (field) =>
+              field.onlyFor === "both" ||
+              (isLogin && field.onlyFor === "login") ||
+              (!isLogin && field.onlyFor === "register")
+          )
+          .map((field) => (
+            <InputField
+              key={field.name}
+              {...field}
+              value={userData[field.name]}
               onChange={handleInputChange}
-              id="username"
-              className="bg-transparent w-full border border-gray-400 rounded p-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
+              error={errors[field.name]}
             />
-            {errors.username && (
-              <p className="text-red-400 text-sm mt-2">{errors.username}</p>
-            )}
-          </div>
-        )}
-
-        {!isLogin && (
-          <div>
-            <label className="block font-medium" htmlFor="fullName">
-              Full Name
-            </label>
-            <input
-              type="text"
-              autoComplete="off"
-              name="fullName"
-              id="fullName"
-              value={userData.fullName}
-              onChange={handleInputChange}
-              className="bg-transparent w-full border border-gray-400 rounded p-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
-            />
-            {errors.fullName && (
-              <p className="text-red-400 text-sm mt-2">{errors.fullName}</p>
-            )}
-          </div>
-        )}
-
-        <div>
-          <label className="block font-medium" htmlFor="email">
-            Email
-          </label>
-          <input
-            type="email"
-            autoComplete="off"
-            name="email"
-            id="email"
-            value={userData.email}
-            onChange={handleInputChange}
-            className="bg-transparent w-full border border-gray-400 rounded p-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
-          />
-          {errors.email && (
-            <p className="text-red-400 text-sm mt-2">{errors.email}</p>
-          )}
-        </div>
-
-        <div>
-          <label className="block font-medium" htmlFor="password">
-            Password
-          </label>
-          <input
-            type="password"
-            name="password"
-            id="password"
-            value={userData.password}
-            onChange={handleInputChange}
-            className="bg-transparent w-full border border-gray-400 rounded p-2 focus:outline-none focus:ring-2 focus:ring-gray-400"
-          />
-          {errors.password && (
-            <p className="text-red-400 text-sm mt-1">{errors.password}</p>
-          )}
-        </div>
+          ))}
 
         <button
           type="submit"
