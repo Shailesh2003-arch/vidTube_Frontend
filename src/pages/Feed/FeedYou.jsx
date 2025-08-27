@@ -35,7 +35,9 @@ export const FeedYou = () => {
         fullName={userInfo.fullName}
         username={userInfo.username}
       />
-      <UserWatchHistoryRow />
+      <div>
+        <UserWatchHistoryRow />
+      </div>
     </div>
   );
 };
