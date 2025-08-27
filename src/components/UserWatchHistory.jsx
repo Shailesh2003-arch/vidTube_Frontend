@@ -91,12 +91,13 @@ export const UserWatchHistoryRow = () => {
       {/* Row */}
       <div
         ref={rowRef}
-        className="flex gap-4 overflow-x-auto scroll-smooth hide-scrollbar w-full max-w-full"
+        className="flex overflow-x-auto gap-4 hide-scrollbar scroll-smooth w-full"
+        // className="flex gap-4 overflow-hidden scroll-smooth hide-scrollbar w-full"
       >
         {videos.slice(0, 8).map((item) => (
           <div
             key={item.video._id}
-            className="flex-shrink-0 w-40 sm:w-52 md:w-60"
+            className="flex-shrink-0 w-52 sm:w-52 md:w-60"
           >
             <Link to={`/watch/${item.video._id}`} className="block group">
               {/* Thumbnail */}
