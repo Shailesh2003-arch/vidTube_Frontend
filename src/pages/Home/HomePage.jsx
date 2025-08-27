@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { ThemeToggler } from "../../components/ThemeToggler";
 import { VideoCard } from "../../components/VideoCard";
 import { Upload } from "lucide-react";
+import {} from "react";
 import { Link } from "react-router-dom";
+import { fetchHomePageVideos } from "../../services/videoService";
 
 export const HomePage = () => {
   const [videos, setVideos] = useState([]);
@@ -10,17 +12,11 @@ export const HomePage = () => {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
-  const fetchHomePageVideos = async (page) => {
+  const loadVideos = useCallback(async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const res = await fetch(
-        `http://localhost:4000/api/v1/videos/homepage?page=${page}&limit=10`,
-        {
-          credentials: "include",
-        }
-      );
-      const data = await res.json();
-      console.log(data);
+      const data = await fetchHomePageVideos(page);
+      console.log(`Total videos rendered`, data.videos.length);
       if (data?.videos?.length > 0) {
         setVideos((prev) => {
           const combined = [...prev, ...data.videos];
@@ -30,18 +26,18 @@ export const HomePage = () => {
           );
         });
       } else {
-        setHasMore(false); // aur videos nahi bache
+        setHasMore(false);
       }
     } catch (error) {
-      console.log(`Error fetching homepage videos`, error.message);
+      console.error(error.message);
     } finally {
       setLoading(false);
     }
-  };
+  }, [page]);
 
   useEffect(() => {
-    fetchHomePageVideos(page);
-  }, [page]);
+    loadVideos();
+  }, [loadVideos]);
 
   return (
     <div className="flex h-screen ">
