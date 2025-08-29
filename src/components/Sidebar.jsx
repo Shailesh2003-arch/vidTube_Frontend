@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Home, Compass, Video, User, Menu, X } from "lucide-react";
+import { Home, Compass, Video, User, Menu, X, Feather } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function Sidebar() {
@@ -20,6 +20,7 @@ export default function Sidebar() {
     { icon: <Home size={24} />, label: "Home", path: "/feed/homepage" },
     { icon: <Compass size={24} />, label: "Explore", path: "/feed/explore" },
     { icon: <Video size={24} />, label: "Subscriptions", path: "/feed/subs" },
+    { icon: <Feather size={24} />, label: "Tweets", path: "/feed/tweets" },
     { icon: <User size={24} />, label: "Profile", path: "/feed/you" },
   ];
 
