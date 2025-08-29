@@ -7,30 +7,15 @@ import { FeedLayout } from "./FeedLayout";
 import { FeedYou } from "./pages/Feed/FeedYou";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import { useEffect, useState } from "react";
 import StudioLayout from "./pages/studio/StudioLayout";
 import VideosPage from "./pages/Studio/VideosPage";
 import CommunityPostPage from "./pages/Studio/CommunityPostPage";
 import PlaylistDetailsPage from "./pages/Studio/PlayListDetailsPage";
+import { Tweets } from "./pages/tweets/Tweet";
 function App() {
-  const [themeMode, setThemeMode] = useState("light");
-
-  const darkTheme = () => {
-    setThemeMode("dark");
-  };
-
-  const lightTheme = () => {
-    setThemeMode("light");
-  };
-
-  useEffect(() => {
-    document.querySelector("html").classList.remove("light", "dark");
-    document.querySelector("html").classList.add(themeMode);
-  }, [themeMode]);
-
   return (
     <>
-      <ThemeProvider value={{ lightTheme, themeMode, darkTheme }}>
+      <ThemeProvider>
         <AuthProvider>
           <BrowserRouter>
             <Routes>
@@ -41,13 +26,16 @@ function App() {
               <Route path="/feed" element={<FeedLayout />}>
                 <Route path="homepage" element={<HomePage />} />
                 <Route path="you" element={<FeedYou />} />
+                <Route path="tweets" element={<Tweets />} />
               </Route>
               {/* studio */}
               <Route path="/studio" element={<StudioLayout />}>
                 <Route path="videos" element={<VideosPage />} />
-                {/* <Route path="playlists" element={<PlaylistPage />} /> */}
                 <Route path="community" element={<CommunityPostPage />} />
-                <Route path="playlists/:id" element={<PlaylistDetailsPage />} />
+                <Route
+                  path="playlists/:playlistId"
+                  element={<PlaylistDetailsPage />}
+                />
               </Route>
             </Routes>
           </BrowserRouter>
