@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { ThemeToggler } from "../../components/ThemeToggler";
 import { VideoCard } from "../../components/VideoCard";
-import { Upload } from "lucide-react";
-import {} from "react";
 import { Link } from "react-router-dom";
+import LikeButton from "../../components/LikeButton";
 import { fetchHomePageVideos } from "../../services/videoService";
+import { NotificationBell } from "../../components/NotificationBell";
 
 export const HomePage = () => {
   const [videos, setVideos] = useState([]);
@@ -44,7 +44,7 @@ export const HomePage = () => {
       {/* Main content */}
       <div className="flex-1 p-4 flex flex-col ">
         <div className="flex items-end justify-end gap-4">
-          {/* Upload Button */}
+          {/* <NotificationBell /> */}
           <Link
             to="/studio/videos"
             className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition-colors"
@@ -56,7 +56,6 @@ export const HomePage = () => {
         </div>
 
         <h2 className="text-xl font-bold mb-4">Latest Videos</h2>
-
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 overflow-y-scroll h-[80vh] hide-scrollbar ">
           {videos.map((video) => (
             <VideoCard key={video._id} video={video} />
