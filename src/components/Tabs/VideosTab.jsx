@@ -72,6 +72,15 @@ export default function VideosTab() {
                       >
                         Delete
                       </button>
+                      <button
+                        // onClick={() => {
+                        //   setSelectedVideo(video);
+                        //   setIsPlaylistModalOpen(true);
+                        // }}
+                        className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+                      >
+                        Add to Playlist
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -111,6 +120,15 @@ export default function VideosTab() {
                     className="flex-1 px-3 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
                   >
                     Delete
+                  </button>
+                  <button
+                    // onClick={() => {
+                    //   setSelectedVideo(video);
+                    //   setIsPlaylistModalOpen(true);
+                    // }}
+                    className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+                  >
+                    Add to Playlist
                   </button>
                 </div>
               </div>
