@@ -28,11 +28,10 @@ export default function PlaylistsTab() {
           New Playlist
         </button>
       </div>
-      {console.log(playlists.length)}
-      {console.log(playlists)}
       {/* Empty State */}
       <div className="flex-1 overflow-y-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 ">
+          {console.log(playlists)}
           {playlists.map((playlist) => (
             <Link
               key={playlist._id}
@@ -43,7 +42,7 @@ export default function PlaylistsTab() {
                 {playlist.thumbnail ? (
                   <img
                     src={playlist.thumbnail}
-                    alt={playlist.title}
+                    alt={playlist.name}
                     className="w-full h-full object-cover rounded-t-lg"
                   />
                 ) : (
@@ -71,39 +70,5 @@ export default function PlaylistsTab() {
         />
       )}
     </div>
-
-    // <div className="flex flex-col items-center justify-center h-60 text-center">
-    //   <p className="text-gray-500 dark:text-gray-400 mb-2">
-    //     No playlists created yet
-    //   </p>
-    //   {/* <button className="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700">
-    //     New playlist
-    //   </button> */}
-    //   <div className="hidden md:flex fixed bottom-6 right-6 w-16 mb-4">
-    //     <div onClick={() => setIsUploadPlaylistModalOpen(true)}>
-    //       <UploadButton />
-    //     </div>
-    //   </div>
-
-    //   {/* Floating Upload FAB for Mobile */}
-    //   <button
-    //     // [PENDING]
-    //     onClick={() => setIsUploadPlaylistModalOpen(true)} // add new modal of uploading the playlist...
-    //     className="fixed bottom-6 right-6 w-16  text-white rounded-full shadow-lg flex items-center justify-center  z-50 md:hidden"
-    //   >
-    //     <UploadButton />
-    //   </button>
-
-    //   {/* Modals */}
-    //   {isUploadPlaylistModalOpen && (
-    //     <UploadPlaylistModal
-    //       isOpen={true}
-    //       onClose={() => {
-    //         setIsUploadPlaylistModalOpen(false);
-    //       }}
-    //       onSuccess={() => setIsUploadPlaylistModalOpen(false)}
-    //     />
-    //   )}
-    // </div>
   );
 }
