@@ -8,6 +8,7 @@ export const usePlaylist = () => {
   const userId = userInfo?._id;
 
   const fetchPlaylists = async () => {
+    if (!userId) return;
     try {
       setLoading(true);
       const res = await fetch(
@@ -16,8 +17,9 @@ export const usePlaylist = () => {
           credentials: "include",
         }
       );
-      if (!res.ok) throw new Error("Failed to fetch playlists"); // [PENDING]
+      if (!res.ok) throw new Error("Failed to fetch playlists");
       const data = await res.json();
+      console.log(data.data);
       setPlaylists(data?.data || []);
     } catch (error) {
       setError(error);
@@ -29,9 +31,7 @@ export const usePlaylist = () => {
   };
 
   useEffect(() => {
-    if (userId) {
-      fetchPlaylists();
-    }
+    fetchPlaylists();
   }, [userId]);
 
   return { playlists, fetchPlaylists, loading, error };
