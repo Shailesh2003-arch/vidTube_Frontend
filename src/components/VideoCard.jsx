@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import timeAgo from "../utils/formatTimeAgo";
 import React from "react";
-export const VideoCard = React.memo(({ video }) => {
+export const  VideoCard = React.memo(({ video }) => {
   console.log("Rendered:", video._id);
   return (
     <Link key={video._id} className="group" to={`/watch/${video._id}`}>
