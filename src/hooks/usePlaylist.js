@@ -1,11 +1,8 @@
-import { useState, useEffect, useContext } from "react";
-import { AuthContext } from "../contexts/AuthContext";
-export const usePlaylist = () => {
+import { useState, useEffect } from "react";
+export const usePlaylist = (userId, fetchOnMount = true) => {
   const [playlists, setPlaylists] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { userInfo } = useContext(AuthContext);
-  const userId = userInfo?._id;
 
   const fetchPlaylists = async () => {
     if (!userId) return;
@@ -25,13 +22,12 @@ export const usePlaylist = () => {
       setError(error);
       console.log(`Error fetching the playlist`, error.message);
     } finally {
-      console.log(playlists);
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchPlaylists();
+    if (fetchOnMount) fetchPlaylists();
   }, [userId]);
 
   return { playlists, fetchPlaylists, loading, error };
