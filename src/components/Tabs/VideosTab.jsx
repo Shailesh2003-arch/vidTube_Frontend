@@ -5,6 +5,7 @@ import EditVideoModal from "../Modals/EditVideoModal";
 import timeAgo from "../../utils/formatTimeAgo";
 import UploadButton from "../UplaodButton";
 import { Upload } from "lucide-react";
+import { AddToPlaylist } from "../Modals/AddToPlaylistModal";
 
 export default function VideosTab() {
   const { videos, error, loading, fetchVideos, deleteVideo, updateVideo } =
@@ -12,6 +13,8 @@ export default function VideosTab() {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
+  const [isAddToPlaylistModalOpen, setIsAddToPlaylistModalOpen] =
+    useState(false);
 
   if (loading) return <p>Loading videos...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -73,14 +76,21 @@ export default function VideosTab() {
                         Delete
                       </button>
                       <button
-                        // onClick={() => {
-                        //   setSelectedVideo(video);
-                        //   setIsPlaylistModalOpen(true);
-                        // }}
+                        onClick={() => {
+                          setSelectedVideo(video);
+                          setIsAddToPlaylistModalOpen(true);
+                        }}
                         className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
                       >
                         Add to Playlist
                       </button>
+                      {
+                        <AddToPlaylist
+                          videoId={selectedVideo?._id}
+                          isOpen={isAddToPlaylistModalOpen}
+                          onClose={() => setIsAddToPlaylistModalOpen(false)}
+                        />
+                      }
                     </td>
                   </tr>
                 ))}
@@ -122,10 +132,10 @@ export default function VideosTab() {
                     Delete
                   </button>
                   <button
-                    // onClick={() => {
-                    //   setSelectedVideo(video);
-                    //   setIsPlaylistModalOpen(true);
-                    // }}
+                    onClick={() => {
+                      setSelectedVideo(video);
+                      setIsAddToPlaylistModalOpen(true);
+                    }}
                     className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
                   >
                     Add to Playlist
@@ -163,6 +173,14 @@ export default function VideosTab() {
           onSave={updateVideo}
         />
       )}
+
+      {
+        <AddToPlaylist
+          videoId={selectedVideo?._id}
+          isOpen={isAddToPlaylistModalOpen}
+          onClose={() => setIsAddToPlaylistModalOpen(false)}
+        />
+      }
     </div>
   );
 }
