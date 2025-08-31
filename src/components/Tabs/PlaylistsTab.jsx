@@ -4,9 +4,13 @@ import { useState } from "react";
 import { Plus, Folder } from "lucide-react";
 import { usePlaylist } from "../../hooks/usePlaylist";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
 
 export default function PlaylistsTab() {
-  const { playlists, loading, error, fetchPlaylists } = usePlaylist();
+  const { userInfo } = useContext(AuthContext);
+  const userId = userInfo?._id;
+  const { playlists, loading, error, fetchPlaylists } = usePlaylist(userId);
   const [isUploadPlaylistModalOpen, setIsUploadPlaylistModalOpen] =
     useState(false);
 
@@ -31,7 +35,6 @@ export default function PlaylistsTab() {
       {/* Empty State */}
       <div className="flex-1 overflow-y-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 ">
-          {console.log(playlists)}
           {playlists.map((playlist) => (
             <Link
               key={playlist._id}
