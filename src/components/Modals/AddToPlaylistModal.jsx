@@ -1,6 +1,8 @@
 import { usePlaylist } from "../../hooks/usePlaylist";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
+
 export const AddToPlaylist = ({ isOpen, onClose, videoId }) => {
   const [selectedPlaylist, setSelectedPlaylist] = useState("");
   const { userInfo } = useContext(AuthContext);
@@ -26,10 +28,11 @@ export const AddToPlaylist = ({ isOpen, onClose, videoId }) => {
       );
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to add video");
-
+      toast.success("Video added successfully ✅");
       console.log("Video added successfully ✅", data);
       onClose();
     } catch (error) {
+      toast.error(error.message || "Failed adding video to the playlist");
       console.log(`Error adding video to the playlist`, error.message);
     }
   };
