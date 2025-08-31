@@ -1,44 +1,46 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { deleteVideoFromthePlaylist } from "../../services/videoService";
 export default function PlaylistDetailsPage() {
   const { playlistId } = useParams();
   const [playlist, setPlaylist] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const fetchPlaylist = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(
+        `http://localhost:4000/api/v1/users/playlist/${playlistId}`,
+        { credentials: "include" }
+      );
+      if (!res.ok) throw new Error("Failed to fetch playlist");
+      const data = await res.json();
+      console.log(data.data);
+      setPlaylist(data.data);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchPlaylist = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch(
-          `http://localhost:4000/api/v1/users/playlist/${playlistId}`,
-          { credentials: "include" }
-        );
-        if (!res.ok) throw new Error("Failed to fetch playlist");
-        const data = await res.json();
-        console.log(data.data);
-        setPlaylist(data.data);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchPlaylist();
   }, [playlistId]);
+
+  const handleDelete = async (playlistId, videoId) => {
+    try {
+      await deleteVideoFromthePlaylist(playlistId, videoId);
+      await fetchPlaylist();
+    } catch (error) {
+      console.log(`Error Removing the video from the playlist`, error.message);
+    }
+  };
 
   if (loading) return <p>Loading playlist...</p>;
   if (error) return <p>Error: {error.message}</p>;
   if (!playlist) return <p>Playlist not found</p>;
-
-  // return (
-  //   <div className="p-6">
-  //     <h1 className="text-2xl font-bold">Your Playlists</h1>
-  //     <p className="mt-2 text-gray-400">
-  //       You can create or manage playlists here.
-  //     </p>
-  //   </div>
-  // );
 
   return (
     <div className="p-4">
@@ -65,7 +67,15 @@ export default function PlaylistDetailsPage() {
                 <h3 className="font-medium text-gray-900 dark:text-gray-100 truncate">
                   {video.title}
                 </h3>
-                <p className="text-sm text-gray-500">{video.duration}</p>
+                <div className="flex justify-between item-center">
+                  <p className="text-sm text-gray-500">{video.duration}</p>
+                  <button
+                    onClick={() => handleDelete(playlist._id, video._id)}
+                    className="px-3 py-2 text-xs  bg-red-500 text-white rounded hover:bg-red-600"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             </div>
           ))
