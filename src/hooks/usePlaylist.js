@@ -16,7 +16,7 @@ export const usePlaylist = (userId, fetchOnMount = true) => {
       );
       if (!res.ok) throw new Error("Failed to fetch playlists");
       const data = await res.json();
-      console.log(data.data);
+      // console.log(data.data);
       setPlaylists(data?.data || []);
     } catch (error) {
       setError(error);
