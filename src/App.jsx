@@ -11,7 +11,6 @@ import StudioLayout from "./pages/studio/StudioLayout";
 import VideosPage from "./pages/Studio/VideosPage";
 import CommunityPostPage from "./pages/Studio/CommunityPostPage";
 import PlaylistDetailsPage from "./pages/Studio/PlayListDetailsPage";
-import { Tweets } from "./pages/tweets/Tweet";
 function App() {
   return (
     <>
@@ -26,7 +25,6 @@ function App() {
               <Route path="/feed" element={<FeedLayout />}>
                 <Route path="homepage" element={<HomePage />} />
                 <Route path="you" element={<FeedYou />} />
-                <Route path="tweets" element={<Tweets />} />
               </Route>
               {/* studio */}
               <Route path="/studio" element={<StudioLayout />}>
