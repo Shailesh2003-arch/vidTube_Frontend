@@ -3,10 +3,11 @@ import UploadPlaylistModal from "../Modals/UploadPlaylistModal";
 import { useState } from "react";
 import { Plus, Folder } from "lucide-react";
 import { usePlaylist } from "../../hooks/usePlaylist";
-import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { PlaylistCard } from "../PlaylistCard";
+import { deletePlaylist } from "../../services/playlistService";
+import { toast } from "react-toastify";
 
 export default function PlaylistsTab() {
   const { userInfo } = useContext(AuthContext);
@@ -18,6 +19,16 @@ export default function PlaylistsTab() {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error.message}</p>;
+
+  const handleDelete = async (id) => {
+    try {
+      const res = await deletePlaylist(id);
+      if (res) toast.success("Deleted Playlist ☑️");
+      await fetchPlaylists();
+    } catch (error) {
+      console.error("Failed to delete playlist:", error.message);
+    }
+  };
 
   return (
     <div className="flex flex-col h-full p-4">
