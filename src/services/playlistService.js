@@ -38,3 +38,22 @@ export const updatePlaylist = async (playlistId, formData) => {
     throw error;
   }
 };
+
+export const deletePlaylist = async (playlistId) => {
+  try {
+    const res = await fetch(
+      `http://localhost:4000/api/v1/users/playlist/${playlistId}`,
+      {
+        credentials: "include",
+        method: "DELETE",
+      }
+    );
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.message || "Failed to delete the Playlist");
+    }
+    return data;
+  } catch (error) {
+    console.log(`Error deleting the Playlist`, error.message);
+  }
+};
