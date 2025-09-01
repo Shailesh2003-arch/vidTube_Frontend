@@ -53,8 +53,8 @@ export const PlaylistCard = ({ playlist, onEdit, onDelete }) => {
             </button>
             <button
               onClick={() => {
-                // setMenuOpen(false);
-                // onDelete(playlist._id);
+                setMenuOpen(false);
+                onDelete(playlist._id);
               }}
               className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-700/40"
             >
