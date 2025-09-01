@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import VideosTab from "../../components/Tabs/VideosTab";
 import PlaylistsTab from "../../components/Tabs/PlaylistsTab";
-import PostsTab from "../../components/Tabs/PostsTab";
+import TweetsTab from "../../components/Tabs/TweetsTab";
 
 // After refractoring the code...
 export default function VideosPage() {
@@ -14,7 +14,7 @@ export default function VideosPage() {
   const tabs = [
     { key: "videos", label: "Videos" },
     { key: "playlists", label: "Playlists" },
-    { key: "posts", label: "Posts" },
+    { key: "tweets", label: "Tweets" },
   ];
 
   return (
@@ -39,7 +39,7 @@ export default function VideosPage() {
 
       {activeTab === "videos" && <VideosTab />}
       {activeTab === "playlists" && <PlaylistsTab />}
-      {activeTab === "posts" && <PostsTab />}
+      {activeTab === "tweets" && <TweetsTab />}
     </div>
   );
 }
