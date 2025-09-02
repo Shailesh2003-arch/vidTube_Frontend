@@ -1,10 +1,30 @@
 import { useTweets } from "../../hooks/useTweets";
 import { Plus } from "lucide-react";
+import { CreateTweetModal } from "../Modals/CreateTweetModal";
+import { useState } from "react";
+import { TweetCard } from "../TweetCard";
 export default function TweetsTab() {
-  const { error, tweets, loading } = useTweets();
+  const { error, tweets, loading, fetchMyTweets, createTweet, updateTweet } =
+    useTweets();
+  const [isTweetModalOpen, setIsTweetModalOpen] = useState(false);
+  const [editingTweet, setEditingTweet] = useState(null);
+
+  const handleEditTweet = (tweet) => {
+    setEditingTweet(tweet);
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
+
+  const handleNewTweet = async (tweetData) => {
+    try {
+      await createTweet(tweetData); // <-- delegate to hook
+      setIsTweetModalOpen(false);
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Something went wrong!");
+    }
+  };
 
   return (
     <div className="flex flex-col h-full p-4">
@@ -14,8 +34,7 @@ export default function TweetsTab() {
         </h2>
         <button
           onClick={() => {
-            // setIsUploadPlaylistModalOpen(true);
-            // setEditPlaylist(null);
+            setIsTweetModalOpen(true);
           }}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg shadow hover:bg-blue-700 transition"
         >
@@ -26,27 +45,22 @@ export default function TweetsTab() {
 
       <div className="p-4 columns-1 sm:columns-2 lg:columns-3 gap-4">
         {tweets.map((tweet) => (
-          <div
+          <TweetCard
             key={tweet._id}
-            className="mb-4 break-inside-avoid rounded-xl border shadow-sm 
-        bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
-          >
-            <div className={`${tweet.image ? "p-4" : "p-3"}`}>
-              <p className="text-gray-900 dark:text-gray-100 text-sm sm:text-base leading-relaxed">
-                {tweet.content}
-              </p>
-
-              {tweet.image?.url ? (
-                <img
-                  src={tweet.image.url}
-                  alt="Tweet"
-                  className="mt-3 w-full rounded-lg object-cover"
-                  onError={(e) => (e.target.style.display = "none")}
-                />
-              ) : null}
-            </div>
-          </div>
+            tweet={tweet}
+            onEdit={(tweet) => handleEditTweet(tweet)}
+          />
         ))}
+
+        {
+          <CreateTweetModal
+            isOpen={isTweetModalOpen}
+            onClose={() => {
+              setIsTweetModalOpen(false);
+            }}
+            onSubmit={handleNewTweet}
+          />
+        }
       </div>
     </div>
   );
