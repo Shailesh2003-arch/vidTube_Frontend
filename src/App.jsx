@@ -10,6 +10,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import StudioLayout from "./pages/studio/StudioLayout";
 import VideosPage from "./pages/Studio/VideosPage";
 import CommunityPostPage from "./pages/Studio/CommunityPostPage";
+import { Tweets } from "./Tweets";
 import PlaylistDetailsPage from "./pages/Studio/PlayListDetailsPage";
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
               <Route path="/feed" element={<FeedLayout />}>
                 <Route path="homepage" element={<HomePage />} />
                 <Route path="you" element={<FeedYou />} />
+                <Route path="tweets" element={<Tweets />} />
               </Route>
               {/* studio */}
               <Route path="/studio" element={<StudioLayout />}>
