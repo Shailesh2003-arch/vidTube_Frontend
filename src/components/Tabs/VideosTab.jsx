@@ -84,6 +84,7 @@ export default function VideosTab() {
                       >
                         Add to Playlist
                       </button>
+                      {/* Modal */}
                       {
                         <AddToPlaylist
                           videoId={selectedVideo?._id}
