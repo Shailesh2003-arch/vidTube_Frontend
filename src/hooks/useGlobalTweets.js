@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+
 export const useGlobalTweets = (limit = 10) => {
   const [tweets, setTweets] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -7,12 +8,13 @@ export const useGlobalTweets = (limit = 10) => {
   const [cursor, setCursor] = useState(null);
   const [hasMore, setHasMore] = useState(true);
 
-  const fetchAllTweets = async () => {
-    if (!hasMore) return;
+  const fetchAllTweets = useCallback(async () => {
+    if (loading || !hasMore) return; // 🛑 guard against double-fetch
     setLoading(true);
+
     try {
       const res = await axios.get(
-        `http://localhost:4000/api/v1/users/tweets/tweets`,
+        "http://localhost:4000/api/v1/users/tweets/tweets",
         {
           withCredentials: true,
           params: { limit, cursor },
@@ -20,28 +22,38 @@ export const useGlobalTweets = (limit = 10) => {
       );
 
       const { tweets: newTweets, nextCursor } = res.data.data;
-      console.log(`Response from the server`, res);
+
       setTweets((prev) => {
-        const merged = [...prev, ...res.data.data.tweets];
+        // merge + dedupe
+        const merged = [...prev, ...newTweets];
         const unique = Array.from(
           new Map(merged.map((t) => [t._id, t])).values()
         );
         return unique;
       });
+
+      // nextCursor handle
       setCursor(nextCursor || null);
-      setHasMore(!!nextCursor); // agar nextCursor hai toh aur data bacha h
-    } catch (error) {
-      setError(error);
-      setLoading(false);
-      console.log(`Error fetching all tweets`, error.message);
+      setHasMore(Boolean(nextCursor)); // false if no more data
+    } catch (err) {
+      setError(err);
+      if (axios.isAxiosError(err)) {
+        if (err.response?.status === 401) {
+          // 🛑 stop infinite calls
+          setHasMore(false);
+          // optional: auto-logout or redirect
+          console.warn("Session expired, stopping further requests");
+        }
+      }
     } finally {
       setLoading(false);
     }
-  };
+  }, [cursor, hasMore, loading, limit]);
 
+  // initial fetch
   useEffect(() => {
     fetchAllTweets();
-  }, []);
+  }, [fetchAllTweets]);
 
   return { tweets, error, loading, fetchAllTweets, hasMore };
 };
