@@ -33,13 +33,15 @@ export const PlaylistCard = ({ playlist, onEdit, onDelete }) => {
 
       {/* Three Dots Menu */}
       <div className="absolute top-2 right-2">
+        {/* Toggle button */}
         <button
-          onClick={() => setMenuOpen((prev) => !prev)}
-          className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
         >
-          <MoreVertical size={18} />
+          <MoreVertical size={20} />
         </button>
 
+        {/* Dropdown menu */}
         {menuOpen && (
           <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10">
             <button
