@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import axios from "axios";
+import api from "../api/axios";
 
 export const useGlobalTweets = (limit = 10) => {
   const [tweets, setTweets] = useState([]);
@@ -13,37 +13,26 @@ export const useGlobalTweets = (limit = 10) => {
     setLoading(true);
 
     try {
-      const res = await axios.get(
-        "http://localhost:4000/api/v1/users/tweets/tweets",
-        {
-          withCredentials: true,
-          params: { limit, cursor },
-        }
-      );
+      const res = await api.get("/users/tweets/tweets", {
+        params: { limit, cursor },
+      });
 
       const { tweets: newTweets, nextCursor } = res.data.data;
 
+      // merge + dedupe
       setTweets((prev) => {
-        // merge + dedupe
         const merged = [...prev, ...newTweets];
-        const unique = Array.from(
-          new Map(merged.map((t) => [t._id, t])).values()
-        );
-        return unique;
+        return Array.from(new Map(merged.map((t) => [t._id, t])).values());
       });
 
-      // nextCursor handle
       setCursor(nextCursor || null);
-      setHasMore(Boolean(nextCursor)); // false if no more data
+      setHasMore(Boolean(nextCursor)); // no nextCursor → no more data
     } catch (err) {
       setError(err);
-      if (axios.isAxiosError(err)) {
-        if (err.response?.status === 401) {
-          // 🛑 stop infinite calls
-          setHasMore(false);
-          // optional: auto-logout or redirect
-          console.warn("Session expired, stopping further requests");
-        }
+
+      if (err.response?.status === 401) {
+        console.warn("Session expired, stopping further requests");
+        setHasMore(false);
       }
     } finally {
       setLoading(false);
