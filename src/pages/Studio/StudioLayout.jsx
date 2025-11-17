@@ -1,14 +1,7 @@
 import { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 
-import {
-  Menu,
-  X,
-  LayoutDashboard,
-  Video,
-  ListVideo,
-  BarChart3,
-} from "lucide-react";
+import { Menu, X, Video } from "lucide-react";
 
 export default function StudioLayout() {
   const location = useLocation();
@@ -40,19 +33,9 @@ export default function StudioLayout() {
         <nav className="flex flex-col gap-2">
           {[
             {
-              to: "/studio/dashboard",
-              label: "Dashboard",
-              icon: <LayoutDashboard size={18} />,
-            },
-            {
               to: "/studio/videos",
               label: "Content",
               icon: <Video size={18} />,
-            },
-            {
-              to: "/studio/analytics",
-              label: "Analytics",
-              icon: <BarChart3 size={18} />,
             },
           ].map((item) => (
             <Link
