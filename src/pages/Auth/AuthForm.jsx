@@ -66,12 +66,16 @@ function AuthForm() {
         : await registerUser(userData);
 
       if (data) {
-        toast.success(
-          isLogin ? "Login successful!" : "Registration successful!"
-        );
-        setUserInfo(data.data.user);
+        if (isLogin) {
+          toast.success("Login successful!");
+          setUserInfo(data.data.user);
+          navigate("/feed/homepage");
+        } else {
+          toast.success("Registration successful! Please log in.");
+          setIsLogin(true); // <<< MAGIC
+        }
+
         setUserData({ username: "", fullName: "", email: "", password: "" });
-        navigate("/feed/homepage");
       }
     } catch (error) {
       toast.error(
@@ -121,6 +125,17 @@ function AuthForm() {
             {isLogin ? "Register" : "Login"}
           </button>
         </p>
+        {isLogin && (
+          <p className="text-right text-sm">
+            <button
+              type="button"
+              onClick={() => navigate("/forgot-password")}
+              className="text-blue-400 hover:underline"
+            >
+              Forgot Password?
+            </button>
+          </p>
+        )}
       </form>
     </div>
   );
