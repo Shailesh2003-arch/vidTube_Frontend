@@ -4,21 +4,32 @@ import { CreateTweetModal } from "../Modals/CreateTweetModal";
 import { useState } from "react";
 import { TweetCard } from "../TweetCard";
 export default function TweetsTab() {
-  const { error, tweets, loading, fetchMyTweets, createTweet, updateTweet } =
-    useTweets();
+  const {
+    error,
+    tweets,
+    loading,
+    fetchMyTweets,
+    createTweet,
+    updateTweet,
+    deleteTweet,
+  } = useTweets();
   const [isTweetModalOpen, setIsTweetModalOpen] = useState(false);
   const [editingTweet, setEditingTweet] = useState(null);
 
   const handleEditTweet = (tweet) => {
     setEditingTweet(tweet);
+    setIsTweetModalOpen(true);
   };
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
 
   const handleNewTweet = async (tweetData) => {
     try {
-      await createTweet(tweetData); // <-- delegate to hook
+      if (editingTweet) {
+        await updateTweet(editingTweet._id, tweetData); // <-- update flow
+      } else {
+        await createTweet(tweetData); // <-- create flow
+      }
+
+      setEditingTweet(null); // reset
       setIsTweetModalOpen(false);
     } catch (err) {
       console.error(err);
@@ -26,6 +37,8 @@ export default function TweetsTab() {
     }
   };
 
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
   return (
     <div className="flex flex-col h-full p-4">
       <div className="flex justify-between items-center mb-4 flex-none">
@@ -34,6 +47,7 @@ export default function TweetsTab() {
         </h2>
         <button
           onClick={() => {
+            setEditingTweet(null);
             setIsTweetModalOpen(true);
           }}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg shadow hover:bg-blue-700 transition"
@@ -49,6 +63,7 @@ export default function TweetsTab() {
             key={tweet._id}
             tweet={tweet}
             onEdit={(tweet) => handleEditTweet(tweet)}
+            onDelete={deleteTweet}
           />
         ))}
 
@@ -56,9 +71,11 @@ export default function TweetsTab() {
           <CreateTweetModal
             isOpen={isTweetModalOpen}
             onClose={() => {
+              setEditingTweet(null);
               setIsTweetModalOpen(false);
             }}
             onSubmit={handleNewTweet}
+            editingTweet={editingTweet}
           />
         }
       </div>
