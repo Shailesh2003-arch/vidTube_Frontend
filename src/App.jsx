@@ -4,7 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { HomePage } from "./pages/Home/HomePage";
 import { FeedLayout } from "./FeedLayout";
-// import {StudioLayout} from "./pages/studio/StudioLayout";
+import StudioLayout from "./pages/studio/StudioLayout";
 import { FeedYou } from "./pages/Feed/FeedYou";
 import VideosPage from "./pages/Studio/VideosPage";
 import { Tweets } from "./Tweets";
