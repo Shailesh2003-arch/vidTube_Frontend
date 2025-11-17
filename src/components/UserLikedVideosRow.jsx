@@ -71,12 +71,12 @@ export const UserLikedVideosRow = () => {
               </button>
             </>
           )}
-          <Link
+          {/* <Link
             to="/liked-videos"
             className="px-3 py-1.5 text-sm font-medium border border-gray-500 dark:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >
             View all
-          </Link>
+          </Link> */}
         </div>
       </div>
 
