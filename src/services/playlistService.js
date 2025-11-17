@@ -1,59 +1,46 @@
+import api from "../api/axios";
+
 export const createPlaylist = async (formData) => {
   try {
-    const res = await fetch(`http://localhost:4000/api/v1/users/playlist`, {
-      credentials: "include",
-      method: "POST",
-      body: formData,
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data.message || "Failed to create playlist");
-    }
-    return data;
+    const res = await api.post("/playlists", formData);
+    return res.data;
   } catch (error) {
-    console.log(`Error creating the playlist: `, error.message);
+    console.error(
+      "Error creating playlist:",
+      error.response?.data || error.message
+    );
+    throw new Error(
+      error.response?.data?.message || "Failed to create playlist"
+    );
   }
 };
 
 export const updatePlaylist = async (playlistId, formData) => {
   try {
-    const res = await fetch(
-      `http://localhost:4000/api/v1/users/playlist/${playlistId}`,
-      {
-        credentials: "include",
-        method: "PATCH",
-        body: formData,
-      }
-    );
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.message || "Failed to update playlist");
-    }
-
-    return data;
+    const res = await api.patch(`/playlists/${playlistId}`, formData);
+    return res.data;
   } catch (error) {
-    console.error("Error updating playlist:", error.message);
-    throw error;
+    console.error(
+      "Error updating playlist:",
+      error.response?.data || error.message
+    );
+    throw new Error(
+      error.response?.data?.message || "Failed to update playlist"
+    );
   }
 };
 
 export const deletePlaylist = async (playlistId) => {
   try {
-    const res = await fetch(
-      `http://localhost:4000/api/v1/users/playlist/${playlistId}`,
-      {
-        credentials: "include",
-        method: "DELETE",
-      }
-    );
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data.message || "Failed to delete the Playlist");
-    }
-    return data;
+    const res = await api.delete(`/playlists/${playlistId}`);
+    return res.data;
   } catch (error) {
-    console.log(`Error deleting the Playlist`, error.message);
+    console.error(
+      "Error deleting playlist:",
+      error.response?.data || error.message
+    );
+    throw new Error(
+      error.response?.data?.message || "Failed to delete playlist"
+    );
   }
 };
