@@ -2,20 +2,22 @@ import { useEffect, useState } from "react";
 import { UserProfileHeader } from "../../components/UserProfileHeader";
 import { useAuth } from "../../contexts/AuthContext";
 import { UserWatchHistoryRow } from "../../components/UserWatchHistory";
+import { UserLikedVideosRow } from "../../components/UserLikedVideosRow";
+import api from "../../api/axios";
 export const FeedYou = () => {
   const [userData, setUserData] = useState(null);
   const { userInfo } = useAuth();
   const fetchUserProfile = async () => {
     try {
-      const res = await fetch("http://localhost:4000/api/v1/users/profile", {
-        credentials: "include",
-      });
-      const data = await res.json();
+      const res = await api.get("/users/profile");
       console.log("User Info from context:", userInfo);
-      console.log(data.data);
-      setUserData(data.data);
+      console.log(res.data.data);
+      setUserData(res.data.data);
     } catch (error) {
-      console.log(`Error Fetching User Profile`, error.message);
+      console.log(
+        "Error fetching user profile:",
+        error.response?.data?.message || error.message
+      );
     }
   };
 
@@ -36,7 +38,8 @@ export const FeedYou = () => {
         username={userInfo.username}
       />
       <div>
-        <UserWatchHistoryRow />
+        <UserWatchHistoryRow videos={userData.watchHistory} />
+        <UserLikedVideosRow />
       </div>
     </div>
   );
