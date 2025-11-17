@@ -1,37 +1,34 @@
 import { toast } from "react-toastify";
-import axios from "axios";
-
+import api from "../api/axios";
 export const fetchHomePageVideos = async (cursor = null, limit = 10) => {
   try {
-    const res = await axios.get(
-      "http://localhost:4000/api/v1/videos/homepage",
-      {
-        withCredentials: true,
-        params: { limit, cursor },
-      }
-    );
-    console.log(res);
+    const res = await api.get("/videos/homepage", {
+      params: { limit, cursor },
+    });
+
     return res.data; // { videos, nextCursor }
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(
-        error.response?.data?.message || "Failed to fetch videos"
-      );
-    }
-    throw new Error("Unexpected error occurred");
+    console.error(
+      "Error fetching home page videos:",
+      error.response?.data || error.message
+    );
+
+    throw new Error(error.response?.data?.message || "Failed to fetch videos");
   }
 };
 
 export const deleteVideoFromthePlaylist = async (playlistId, videoId) => {
-  const res = await fetch(
-    `http://localhost:4000/api/v1/users/playlist/remove/${playlistId}/${videoId}`,
-    {
-      credentials: "include",
-      method: "PATCH",
-    }
-  );
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.message || "Failed to fetch videos");
-  toast.success("Removed Video from the Playlist");
-  return data;
+  try {
+    const res = await api.patch(`/playlists/remove/${playlistId}/${videoId}`);
+
+    toast.success("Removed Video from the Playlist");
+
+    return res.data;
+  } catch (error) {
+    console.error(
+      "Error removing video from playlist:",
+      error.response?.data || error.message
+    );
+    throw new Error(error.response?.data?.message || "Failed to remove video");
+  }
 };
