@@ -3,7 +3,12 @@ import timeAgo from "../utils/formatTimeAgo";
 import React from "react";
 export const VideoCard = React.memo(({ video }) => {
   return (
-    <Link key={video._id} className="group" to={`/watch/${video._id}`}>
+    <Link
+      key={video._id}
+      state={{ video }}
+      className="group"
+      to={`/feed/watch/${video._id}`}
+    >
       {/* Thumbnail */}
       <div className="relative w-full aspect-video overflow-hidden rounded-xl">
         <img
