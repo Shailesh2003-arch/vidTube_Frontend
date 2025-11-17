@@ -26,7 +26,6 @@ export default function VideosTab() {
           <UploadButton />
         </div>
       </div>
-
       {/* Videos Content */}
       {videos.length === 0 ? (
         <p className="text-center text-gray-500 dark:text-gray-400 mt-4">
@@ -40,7 +39,7 @@ export default function VideosTab() {
               <thead>
                 <tr className="border-b dark:border-gray-700">
                   <th className="text-left p-2">Title</th>
-                  <th className="text-left p-2">Description</th>
+                  {/* <th className="text-left p-2">Description</th> */}
                   <th className="text-left p-2">Views</th>
                   <th className="text-left p-2">Published</th>
                   <th className="text-left p-2">Actions</th>
@@ -50,9 +49,9 @@ export default function VideosTab() {
                 {videos.map((video) => (
                   <tr key={video._id} className="border-b dark:border-gray-700">
                     <td className="p-2 font-medium">{video.title}</td>
-                    <td className="p-2 text-gray-600 dark:text-gray-400 line-clamp-1">
+                    {/* <td className="p-2 text-gray-600 dark:text-gray-400 line-clamp-1">
                       {video.description}
-                    </td>
+                    </td> */}
                     <td className="p-2 text-sm text-gray-700 dark:text-gray-400">
                       {video.views || 0}
                     </td>
