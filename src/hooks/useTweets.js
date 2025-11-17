@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import api from "../api/axios";
 import { useAuth } from "../contexts/AuthContext";
-import axios from "axios";
 
 export const useTweets = () => {
   const [tweets, setTweets] = useState([]);
@@ -8,21 +8,17 @@ export const useTweets = () => {
   const [error, setError] = useState(null);
 
   const { userInfo } = useAuth();
-  const userId = userInfo._id;
+  const userId = userInfo?._id;
 
+  // Fetch tweets
   const fetchMyTweets = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(
-        `http://localhost:4000/api/v1/users/tweets/${userId}`,
-        {
-          withCredentials: true, // jwt cookie bhejna
-        }
-      );
+      const res = await api.get(`/users/tweets/${userId}`);
       setTweets(res.data.data);
-      console.log(res);
     } catch (err) {
       console.error("Error fetching tweets", err);
+      setError(err);
     } finally {
       setLoading(false);
     }
@@ -32,73 +28,62 @@ export const useTweets = () => {
     if (userId) fetchMyTweets();
   }, [userId]);
 
+  // CREATE Tweet
   const createTweet = async (tweetData) => {
     try {
-      let res;
-      if (tweetData instanceof FormData) {
-        res = await fetch("http://localhost:4000/api/v1/users/tweets/create", {
-          method: "POST",
-          body: tweetData,
-          credentials: "include",
-        });
-      } else {
-        res = await fetch("http://localhost:4000/api/v1/users/tweets/create", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(tweetData),
-          credentials: "include",
-        });
-      }
-      const data = await res.json();
-      if (res.ok) {
-        await fetchMyTweets();
-      } else {
-        alert(data.message || "Failed to post tweet");
-      }
-    } catch (error) {
-      console.log(`Error creating the Tweet`, error.message);
+      const headers =
+        tweetData instanceof FormData
+          ? {}
+          : { "Content-Type": "application/json" };
+
+      await api.post(`/users/tweets/create`, tweetData, { headers });
+
+      await fetchMyTweets();
+    } catch (err) {
+      console.log("Error creating tweet:", err);
+      alert(err?.response?.data?.message || "Failed to post tweet");
     }
   };
 
+  // UPDATE Tweet
   const updateTweet = async (tweetId, tweetData) => {
     try {
-      let res;
-      if (tweetData instanceof FormData) {
-        res = await fetch(
-          `http://localhost:4000/api/v1/users/tweets/${tweetId}`,
-          {
-            method: "PATCH",
-            body: tweetData,
-            credentials: "include",
-          }
-        );
-      } else {
-        res = await fetch(
-          `http://localhost:4000/api/v1/users/tweets/${tweetId}`,
-          {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(tweetData),
-            credentials: "include",
-          }
-        );
-      }
+      const headers =
+        tweetData instanceof FormData
+          ? {}
+          : { "Content-Type": "application/json" };
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to update tweet");
-      return data;
+      const res = await api.patch(`/users/tweets/${tweetId}`, tweetData, {
+        headers,
+      });
+
+      await fetchMyTweets();
+      return res.data;
     } catch (err) {
-      console.error(err);
+      console.error("Update tweet error:", err);
       throw err;
+    }
+  };
+
+  // DELETE Tweet
+  const deleteTweet = async (tweetId) => {
+    try {
+      await api.delete(`/users/tweets/${tweetId}`);
+
+      await fetchMyTweets();
+    } catch (err) {
+      console.error("Delete tweet error:", err);
+      alert(err?.response?.data?.message || "Failed to delete tweet");
     }
   };
 
   return {
     loading,
     error,
-    fetchMyTweets,
     tweets,
+    fetchMyTweets,
     createTweet,
     updateTweet,
+    deleteTweet,
   };
 };
