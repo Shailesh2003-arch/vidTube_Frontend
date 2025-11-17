@@ -2,34 +2,12 @@ import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import timeAgo from "../utils/formatTimeAgo";
+import { useWatchHistory } from "../contexts/WatchHistoryContext";
 
 export const UserWatchHistoryRow = () => {
-  const [videos, setVideos] = useState([]);
+  const { history, loading, error } = useWatchHistory();
   const [showArrows, setShowArrows] = useState(false);
-  const [isLoading, setIsloading] = useState(true);
   const rowRef = useRef(null);
-
-  const fetchWatched = async () => {
-    try {
-      const res = await fetch(
-        `http://localhost:4000/api/v1/users/watch-history`,
-        {
-          credentials: "include",
-        }
-      );
-      const data = await res.json();
-      setIsloading(false);
-      console.log(`Data recieved is`, data);
-      console.log(`Video recieved is`, data.data);
-      setVideos(data.data);
-    } catch (error) {
-      console.log(`Error fetching watched videos`, error.message);
-    }
-  };
-
-  useEffect(() => {
-    fetchWatched();
-  }, []);
 
   useEffect(() => {
     const checkOverflow = () => {
@@ -40,7 +18,7 @@ export const UserWatchHistoryRow = () => {
     checkOverflow();
     window.addEventListener("resize", checkOverflow);
     return () => window.removeEventListener("resize", checkOverflow);
-  }, [videos]);
+  }, [history]);
   const scrollLeft = () => {
     rowRef.current.scrollBy({ left: -300, behavior: "smooth" });
   };
@@ -48,6 +26,12 @@ export const UserWatchHistoryRow = () => {
   const scrollRight = () => {
     rowRef.current.scrollBy({ left: 300, behavior: "smooth" });
   };
+
+  if (loading)
+    return <div className="text-gray-400">Loading watch history...</div>;
+
+  if (error)
+    return <div className="text-red-400">Failed to load watch history 😔</div>;
 
   return (
     <div className="mb-6">
@@ -80,7 +64,7 @@ export const UserWatchHistoryRow = () => {
             </>
           )}
           <Link
-            to="/history"
+            to={`/feed/history`}
             className="px-3 py-1.5 text-sm font-medium border border-gray-500 dark:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >
             View all
@@ -94,12 +78,12 @@ export const UserWatchHistoryRow = () => {
         className="flex overflow-x-auto gap-4 hide-scrollbar scroll-smooth w-full"
         // className="flex gap-4 overflow-hidden scroll-smooth hide-scrollbar w-full"
       >
-        {videos.slice(0, 8).map((item) => (
+        {history.slice(0, 8).map((item) => (
           <div
-            key={item.video._id}
+            key={`${item.video?._id || "no-video"}-${item.watchedAt}`}
             className="flex-shrink-0 w-52 sm:w-52 md:w-60"
           >
-            <Link to={`/watch/${item.video._id}`} className="block group">
+            <Link to={`/feed/watch/${item.video._id}`} className="block group">
               {/* Thumbnail */}
               <div className="relative w-full aspect-video overflow-hidden rounded-xl">
                 <img
@@ -115,8 +99,8 @@ export const UserWatchHistoryRow = () => {
               {/* Video Info */}
               <div className="flex mt-2 gap-2">
                 <img
-                  src={"/default-avatar.png"}
-                  alt={item.video.owner.username}
+                  src={item.video.owner.avatar}
+                  alt={item.video.owner.avatar}
                   className="w-8 h-8 rounded-full object-cover"
                 />
                 <div className="flex flex-col">
