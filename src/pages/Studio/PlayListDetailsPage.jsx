@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { deleteVideoFromthePlaylist } from "../../services/videoService";
+import api from "../../api/axios";
 export default function PlaylistDetailsPage() {
   const { playlistId } = useParams();
   const [playlist, setPlaylist] = useState(null);
@@ -10,14 +11,8 @@ export default function PlaylistDetailsPage() {
   const fetchPlaylist = async () => {
     try {
       setLoading(true);
-      const res = await fetch(
-        `http://localhost:4000/api/v1/users/playlist/${playlistId}`,
-        { credentials: "include" }
-      );
-      if (!res.ok) throw new Error("Failed to fetch playlist");
-      const data = await res.json();
-      console.log(data.data);
-      setPlaylist(data.data);
+      const res = await api.get(`/playlists/${playlistId}`);
+      setPlaylist(res.data.data);
     } catch (err) {
       setError(err);
     } finally {
@@ -47,7 +42,6 @@ export default function PlaylistDetailsPage() {
       {/* Playlist header */}
       <div className="mb-6">
         <h2 className="text-2xl font-bold">Playlist : {playlist.name}</h2>
-        {/* <p className="text-gray-500">{playlist.videos.length} videos</p> */}
       </div>
 
       {/* Videos grid */}
