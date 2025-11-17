@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import api from "../api/axios";
 export const usePlaylist = (userId, fetchOnMount = true) => {
   const [playlists, setPlaylists] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -6,21 +7,16 @@ export const usePlaylist = (userId, fetchOnMount = true) => {
 
   const fetchPlaylists = async () => {
     if (!userId) return;
+
     try {
       setLoading(true);
-      const res = await fetch(
-        `http://localhost:4000/api/v1/users/playlist/user/${userId}`,
-        {
-          credentials: "include",
-        }
-      );
-      if (!res.ok) throw new Error("Failed to fetch playlists");
-      const data = await res.json();
-      // console.log(data.data);
-      setPlaylists(data?.data || []);
+
+      const res = await api.get(`/playlists/user/${userId}`);
+
+      setPlaylists(res.data?.data || []);
     } catch (error) {
       setError(error);
-      console.log(`Error fetching the playlist`, error.message);
+      console.log("Error fetching playlists:", error.message);
     } finally {
       setLoading(false);
     }
