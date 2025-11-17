@@ -1,35 +1,25 @@
-const API_BASE = `http://localhost:4000/api/v1/users`;
+import api from "../api/axios";
 
 export const loginUser = async (payload) => {
-  console.log(payload);
-  const res = await fetch(`${API_BASE}/login`, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
+  try {
+    const res = await api.post("/users/login", payload);
 
-  const data = await res.json();
-  console.log("API Response:", data);
-
-  if (!res.ok) {
-    throw new Error(data.message || "Login failed");
+    console.log("API Response:", res.data);
+    return res.data;
+  } catch (error) {
+    console.error("Login error:", error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || "Login failed");
   }
-  return data;
 };
 
 export const registerUser = async (payload) => {
-  const res = await fetch(`${API_BASE}/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-    credentials: "include",
-  });
+  try {
+    const res = await api.post("/users/register", payload);
 
-  const data = await res.json();
-  console.log("API Response:", data);
-  if (!res.ok) throw new Error(data.message || "Registration failed");
-  return data;
+    console.log("API Response:", res.data);
+    return res.data;
+  } catch (error) {
+    console.error("Register error:", error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || "Registration failed");
+  }
 };
