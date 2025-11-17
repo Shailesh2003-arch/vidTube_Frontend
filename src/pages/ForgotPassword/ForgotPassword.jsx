@@ -15,7 +15,7 @@ const ForgotPassword = () => {
     setError("");
 
     try {
-      const res = await api.post("/auth/forgot-password", { email });
+      const res = await api.post("/api/v1/auth/forgot-password", { email });
 
       setMessage(res.data.message || "Password reset link has been sent!");
       setEmail("");

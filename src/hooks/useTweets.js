@@ -14,7 +14,7 @@ export const useTweets = () => {
   const fetchMyTweets = async () => {
     try {
       setLoading(true);
-      const res = await api.get(`/users/tweets/${userId}`);
+      const res = await api.get(`/api/v1/users/tweets/${userId}`);
       setTweets(res.data.data);
     } catch (err) {
       console.error("Error fetching tweets", err);
@@ -36,7 +36,7 @@ export const useTweets = () => {
           ? {}
           : { "Content-Type": "application/json" };
 
-      await api.post(`/users/tweets/create`, tweetData, { headers });
+      await api.post(`/api/v1/users/tweets/create`, tweetData, { headers });
 
       await fetchMyTweets();
     } catch (err) {
@@ -53,9 +53,13 @@ export const useTweets = () => {
           ? {}
           : { "Content-Type": "application/json" };
 
-      const res = await api.patch(`/users/tweets/${tweetId}`, tweetData, {
-        headers,
-      });
+      const res = await api.patch(
+        `/api/v1/users/tweets/${tweetId}`,
+        tweetData,
+        {
+          headers,
+        }
+      );
 
       await fetchMyTweets();
       return res.data;
@@ -68,7 +72,7 @@ export const useTweets = () => {
   // DELETE Tweet
   const deleteTweet = async (tweetId) => {
     try {
-      await api.delete(`/users/tweets/${tweetId}`);
+      await api.delete(`/api/v1/users/tweets/${tweetId}`);
 
       await fetchMyTweets();
     } catch (err) {

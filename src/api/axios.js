@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:4000/api/v1",
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
 });
 
@@ -15,7 +15,7 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        await api.post("/users/refresh-token"); // hits your backend refresh route
+        await api.post("/api/v1/users/refresh-token"); // hits your backend refresh route
         return api(originalRequest); // retry actual API call
       } catch (err) {
         console.log("Refresh failed. Logging out...");

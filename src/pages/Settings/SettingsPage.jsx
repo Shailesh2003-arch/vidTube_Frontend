@@ -19,7 +19,7 @@ export default function SettingsPage() {
   const updateProfile = async () => {
     try {
       setLoadingProfile(true);
-      await api.patch("/users/update-profile", { fullName, email });
+      await api.patch("/api/v1/users/update-profile", { fullName, email });
       toast.success("Profile updated successfully ✨");
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
@@ -37,7 +37,7 @@ export default function SettingsPage() {
     try {
       setLoadingPassword(true);
 
-      await api.patch("/users/change-password", {
+      await api.patch("/api/v1/users/change-password", {
         oldPassword: currentPwd,
         newPassword: newPwd,
       });

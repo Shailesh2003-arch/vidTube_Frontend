@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import socket from "../socket";
+import api from "../api/axios";
 export const AuthContext = createContext();
 AuthContext.displayName = "AuthContext";
 
@@ -57,9 +58,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const verifyUser = async () => {
       try {
-        const res = await axios.get("/api/v1/users/profile", {
-          withCredentials: true,
-        });
+        const res = await api.get("/api/v1/users/profile");
 
         if (res.data?.data?.user) {
           updateUserInfo(res.data.data.user);
@@ -87,10 +86,7 @@ export const AuthProvider = ({ children }) => {
 
     const fetchNotifications = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:4000/api/v1/users/notifications/all",
-          { withCredentials: true }
-        );
+        const res = await api.get("/api/v1/users/notifications/all");
         setNotifications(res.data.data || []);
         console.log("📬 Notifications loaded:", res.data.data?.length);
       } catch (err) {

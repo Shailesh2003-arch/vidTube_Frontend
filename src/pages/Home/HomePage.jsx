@@ -33,7 +33,7 @@ export const HomePage = () => {
 
   const handleLogout = async () => {
     try {
-      await api.post("/users/logout", {});
+      await api.post("/api/v1/users/logout", {});
       setUserInfo(null);
       setNotifications([]);
       localStorage.removeItem("userInfo");

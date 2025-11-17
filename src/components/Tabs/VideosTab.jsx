@@ -4,7 +4,6 @@ import UploadVideoModal from "../Modals/UploadVideoModal";
 import EditVideoModal from "../Modals/EditVideoModal";
 import timeAgo from "../../utils/formatTimeAgo";
 import UploadButton from "../UplaodButton";
-import { Upload } from "lucide-react";
 import { AddToPlaylist } from "../Modals/AddToPlaylistModal";
 
 export default function VideosTab() {

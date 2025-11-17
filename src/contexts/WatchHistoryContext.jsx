@@ -32,7 +32,7 @@ export function WatchHistoryProvider({ children }) {
     setError(null);
 
     try {
-      const res = await api.get("/users/watch-history");
+      const res = await api.get("/api/v1/users/watch-history");
 
       const data = res?.data?.data || [];
       setHistory(data);

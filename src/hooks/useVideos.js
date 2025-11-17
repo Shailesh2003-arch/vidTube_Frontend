@@ -11,7 +11,7 @@ export const useVideos = () => {
   const fetchVideos = async () => {
     try {
       setLoading(true);
-      const res = await api.get("/videos/user");
+      const res = await api.get("/api/v1/videos/user");
 
       setVideos(res.data.data || []);
     } catch (err) {
@@ -42,7 +42,7 @@ export const useVideos = () => {
 
   const updateVideo = async (videoId, formData) => {
     try {
-      const res = await api.patch(`/videos/vId/${videoId}`, formData);
+      const res = await api.patch(`/api/v1/videos/vId/${videoId}`, formData);
 
       setVideos((prev) =>
         prev.map((v) => (v._id === videoId ? { ...v, ...res.data.data } : v))
@@ -56,7 +56,7 @@ export const useVideos = () => {
   // for deleting the user's uploaded videos...
   const deleteVideo = async (videoId) => {
     try {
-      await api.delete(`/videos/vId/${videoId}`);
+      await api.delete(`/api/v1/videos/vId/${videoId}`);
 
       setVideos((prev) => prev.filter((v) => v._id !== videoId));
     } catch (err) {

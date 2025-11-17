@@ -9,7 +9,7 @@ export const FeedYou = () => {
   const { userInfo } = useAuth();
   const fetchUserProfile = async () => {
     try {
-      const res = await api.get("/users/profile");
+      const res = await api.get("/api/v1/users/profile");
       console.log("User Info from context:", userInfo);
       console.log(res.data.data);
       setUserData(res.data.data);

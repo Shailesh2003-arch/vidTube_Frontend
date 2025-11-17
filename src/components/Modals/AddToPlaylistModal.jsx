@@ -23,7 +23,7 @@ export const AddToPlaylist = ({ isOpen, onClose, videoId }) => {
 
     try {
       const res = await api.patch(
-        `/playlists/add/${selectedPlaylist}/${videoId}`,
+        `/api/v1/playlists/add/${selectedPlaylist}/${videoId}`,
         { videoId } // body
       );
 

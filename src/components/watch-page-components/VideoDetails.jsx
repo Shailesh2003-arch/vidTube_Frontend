@@ -21,7 +21,7 @@ export const VideoDetails = ({
 }) => {
   const handleLike = async () => {
     try {
-      await api.post(`/likes/toggle/v/${videoId}`, {
+      await api.post(`/api/v1/likes/toggle/v/${videoId}`, {
         type: "like",
       });
 
@@ -35,11 +35,9 @@ export const VideoDetails = ({
   };
   const handleDislike = async () => {
     try {
-      await api.post(`/likes/toggle/v/${videoId}`, {
+      await api.post(`/api/v1/likes/toggle/v/${videoId}`, {
         type: "dislike",
       });
-
-      // No manual state updates — socket got your back.
     } catch (error) {
       console.error(
         "Dislike action failed:",
@@ -72,11 +70,7 @@ export const VideoDetails = ({
 
   const handleSubscribe = async () => {
     try {
-      const res = await axios.post(
-        `http://localhost:4000/api/v1/users/subscription/c/${channelId}`,
-        {},
-        { withCredentials: true }
-      );
+      const res = await api.post(`/api/v1/users/subscription/c/${channelId}`);
       const { isSubscribed: newStatus, subscribersCount: newCount } =
         res.data.data || {};
       setIsSubscribed((prev) => !prev);

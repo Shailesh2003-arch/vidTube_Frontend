@@ -11,7 +11,7 @@ export default function PlaylistDetailsPage() {
   const fetchPlaylist = async () => {
     try {
       setLoading(true);
-      const res = await api.get(`/playlists/${playlistId}`);
+      const res = await api.get(`/api/v1/playlists/${playlistId}`);
       setPlaylist(res.data.data);
     } catch (err) {
       setError(err);

@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+const BASE_URL = "https://videtube-dhe0.onrender.com";
+
 // here we have not used the axios instance... keep in mind.
 export default function UploadVideoModal({ isOpen, onClose, onSuccess }) {
   const [title, setTitle] = useState("");
@@ -23,7 +25,7 @@ export default function UploadVideoModal({ isOpen, onClose, onSuccess }) {
     formData.append("videoFile", videoFile);
 
     try {
-      const res = await fetch(`http://localhost:4000/api/v1/videos/upload`, {
+      const res = await fetch(`${BASE_URL}/api/v1/videos/upload`, {
         method: "POST",
         credentials: "include",
         body: formData,

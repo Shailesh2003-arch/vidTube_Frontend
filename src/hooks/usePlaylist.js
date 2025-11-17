@@ -11,7 +11,7 @@ export const usePlaylist = (userId, fetchOnMount = true) => {
     try {
       setLoading(true);
 
-      const res = await api.get(`/playlists/user/${userId}`);
+      const res = await api.get(`/api/v1/playlists/user/${userId}`);
 
       setPlaylists(res.data?.data || []);
     } catch (error) {

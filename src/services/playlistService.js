@@ -2,7 +2,7 @@ import api from "../api/axios";
 
 export const createPlaylist = async (formData) => {
   try {
-    const res = await api.post("/playlists", formData);
+    const res = await api.post("/api/v1/playlists", formData);
     return res.data;
   } catch (error) {
     console.error(
@@ -17,7 +17,7 @@ export const createPlaylist = async (formData) => {
 
 export const updatePlaylist = async (playlistId, formData) => {
   try {
-    const res = await api.patch(`/playlists/${playlistId}`, formData);
+    const res = await api.patch(`/api/v1/playlists/${playlistId}`, formData);
     return res.data;
   } catch (error) {
     console.error(
@@ -32,7 +32,7 @@ export const updatePlaylist = async (playlistId, formData) => {
 
 export const deletePlaylist = async (playlistId) => {
   try {
-    const res = await api.delete(`/playlists/${playlistId}`);
+    const res = await api.delete(`/api/v1/playlists/${playlistId}`);
     return res.data;
   } catch (error) {
     console.error(

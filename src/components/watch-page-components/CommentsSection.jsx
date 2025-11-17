@@ -19,7 +19,7 @@ export const CommentsSection = ({ avatar, alt, videoId }) => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const res = await api.get(`/comments/${videoId}`);
+        const res = await api.get(`/api/v1/comments/${videoId}`);
         setComments(res.data.data);
       } catch (error) {
         console.error(
@@ -34,7 +34,7 @@ export const CommentsSection = ({ avatar, alt, videoId }) => {
 
   const handleAddComment = async (text) => {
     try {
-      const res = await api.post(`/comments/${videoId}`, { text });
+      const res = await api.post(`/api/v1/comments/${videoId}`, { text });
 
       const newComment = res.data.data;
 
@@ -51,7 +51,7 @@ export const CommentsSection = ({ avatar, alt, videoId }) => {
 
   const handleDeleteComment = async (commentId) => {
     try {
-      await api.delete(`/comments/comment/${commentId}`);
+      await api.delete(`/api/v1/comments/comment/${commentId}`);
 
       setComments((prev) => prev.filter((c) => c._id !== commentId));
     } catch (err) {
@@ -89,7 +89,7 @@ export const CommentsSection = ({ avatar, alt, videoId }) => {
 
   const handleAddReply = async (commentId, text) => {
     try {
-      const res = await api.post(`/reply/${commentId}`, { text });
+      const res = await api.post(`api/v1/reply/${commentId}`, { text });
       const newReply = res.data.reply;
 
       setComments((prevComments) =>
@@ -120,7 +120,7 @@ export const CommentsSection = ({ avatar, alt, videoId }) => {
     try {
       setLoading(true);
 
-      const res = await api.get(`/reply/${commentId}`);
+      const res = await api.get(`/api/v1/reply/${commentId}`);
       const fetchedReplies = res.data.replies || [];
 
       // Insert replies into the correct comment
@@ -156,7 +156,7 @@ export const CommentsSection = ({ avatar, alt, videoId }) => {
       );
 
       // 📡 Actual API call (your new axios instance)
-      const res = await api.post(`/comments/${commentId}/like`);
+      const res = await api.post(`/api/v1/comments/${commentId}/like`);
       const { likesCount, dislikesCount } = res.data.data;
 
       // 🎯 Sync UI with real backend values
@@ -178,7 +178,7 @@ export const CommentsSection = ({ avatar, alt, videoId }) => {
   const handleDislike = async (commentId) => {
     try {
       // 📡 Hit backend using your custom axios instance
-      const res = await api.post(`/comments/${commentId}/dislike`);
+      const res = await api.post(`/api/v1/comments/${commentId}/dislike`);
 
       const { likesCount, dislikesCount } = res.data.data;
 
@@ -201,8 +201,6 @@ export const CommentsSection = ({ avatar, alt, videoId }) => {
       );
     }
   };
-
-  console.log(comments);
 
   return (
     <div className="mt-8">

@@ -30,7 +30,7 @@ export default function WatchPage() {
       const fetchVideo = async () => {
         setLoading(true);
         try {
-          const res = await api.get(`/videos/vId/${videoId}`);
+          const res = await api.get(`/api/v1/videos/vId/${videoId}`);
           const data = res.data.data;
           setVideo(data);
           setIsSubscribed(data.isSubscribed);

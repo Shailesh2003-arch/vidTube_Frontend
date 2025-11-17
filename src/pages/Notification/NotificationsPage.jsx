@@ -7,7 +7,7 @@ const Notifications = () => {
 
   const markAsRead = async (id) => {
     try {
-      await api.put(`/users/notifications/${id}/read`);
+      await api.put(`/api/v1/users/notifications/${id}/read`);
 
       setNotifications((prev) =>
         prev.map((n) => (n._id === id ? { ...n, isRead: true } : n))

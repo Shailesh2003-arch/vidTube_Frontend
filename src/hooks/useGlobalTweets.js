@@ -13,7 +13,7 @@ export const useGlobalTweets = (limit = 10) => {
     setLoading(true);
 
     try {
-      const res = await api.get("/users/tweets/tweets", {
+      const res = await api.get("/api/v1/users/tweets/tweets", {
         params: { limit, cursor },
       });
 

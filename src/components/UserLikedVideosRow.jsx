@@ -13,7 +13,7 @@ export const UserLikedVideosRow = () => {
   useEffect(() => {
     const fetchLikedVideos = async () => {
       try {
-        const res = await api.get("/videos/liked");
+        const res = await api.get("/api/v1/videos/liked");
 
         setLikedVideos(res.data.data);
         setIsLoading(false);

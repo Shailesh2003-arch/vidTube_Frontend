@@ -2,7 +2,7 @@ import { toast } from "react-toastify";
 import api from "../api/axios";
 export const fetchHomePageVideos = async (cursor = null, limit = 10) => {
   try {
-    const res = await api.get("/videos/homepage", {
+    const res = await api.get("/api/v1/videos/homepage", {
       params: { limit, cursor },
     });
 
@@ -19,7 +19,9 @@ export const fetchHomePageVideos = async (cursor = null, limit = 10) => {
 
 export const deleteVideoFromthePlaylist = async (playlistId, videoId) => {
   try {
-    const res = await api.patch(`/playlists/remove/${playlistId}/${videoId}`);
+    const res = await api.patch(
+      `/api/v1/playlists/remove/${playlistId}/${videoId}`
+    );
 
     toast.success("Removed Video from the Playlist");
 

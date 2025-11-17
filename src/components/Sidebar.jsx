@@ -23,7 +23,7 @@ export default function Sidebar() {
 
   const handleLogout = async () => {
     try {
-      await api.post("/users/logout", {});
+      await api.post("/api/v1/users/logout", {});
 
       // Clear auth + notifications
       setUserInfo(null);

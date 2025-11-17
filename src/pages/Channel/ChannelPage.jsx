@@ -22,7 +22,7 @@ const ChannelPage = () => {
   useEffect(() => {
     const fetchChannel = async () => {
       try {
-        const res = await api.get(`/users/${username}`);
+        const res = await api.get(`/api/v1/users/${username}`);
         const data = res.data.data;
 
         setChannelData(data);
@@ -83,10 +83,10 @@ const ChannelPage = () => {
 
     try {
       // Update the user (endpoint could be 'avatar', 'banner', etc.)
-      await api.patch(`/users/${endpoint}`, formData);
+      await api.patch(`/api/v1/users/${endpoint}`, formData);
 
       // Fetch refreshed user data
-      const refreshed = await api.get(`/users/${username}`);
+      const refreshed = await api.get(`/api/v1/users/${username}`);
       setChannelData(refreshed.data.data);
     } catch (err) {
       console.error("Error updating image:", err.response?.data || err.message);

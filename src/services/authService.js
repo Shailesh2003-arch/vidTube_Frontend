@@ -2,7 +2,7 @@ import api from "../api/axios";
 
 export const loginUser = async (payload) => {
   try {
-    const res = await api.post("/users/login", payload);
+    const res = await api.post("/api/v1/users/login", payload);
 
     console.log("API Response:", res.data);
     return res.data;
@@ -14,7 +14,7 @@ export const loginUser = async (payload) => {
 
 export const registerUser = async (payload) => {
   try {
-    const res = await api.post("/users/register", payload);
+    const res = await api.post("/api/v1/users/register", payload);
 
     console.log("API Response:", res.data);
     return res.data;
