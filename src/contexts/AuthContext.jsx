@@ -1,6 +1,6 @@
-import { createContext, useContext, useState } from "react";
-// import { socket } from "../socket";
-
+import { createContext, useContext, useState, useEffect } from "react";
+import axios from "axios";
+import socket from "../socket";
 export const AuthContext = createContext();
 AuthContext.displayName = "AuthContext";
 
@@ -10,38 +10,197 @@ export const AuthProvider = ({ children }) => {
     return stored ? JSON.parse(stored) : null;
   });
 
-  // 2. Helper to update state AND localStorage
+  const [notifications, setNotifications] = useState([]);
+  const [isReady, setIsReady] = useState(false); // ensures we wait for auth check
+
+  // ✅ Helper — sync localStorage + state
   const updateUserInfo = (info) => {
     setUserInfo(info);
     if (info) {
       localStorage.setItem("userInfo", JSON.stringify(info));
     } else {
-      localStorage.removeItem("userInfo"); // logout case
+      localStorage.removeItem("userInfo");
     }
   };
 
-  // const [notifications, setNotifications] = useState([]);
+  // ✅ Step 1: Verify session on mount
   // useEffect(() => {
-  //   if (userInfo?._id) {
-  //     socket.emit("join", userInfo._id);
+  //   const verifyUser = async () => {
+  //     try {
+  //       const res = await axios.get(
+  //         "http://localhost:4000/api/v1/users/profile",
+  //         {
+  //           withCredentials: true,
+  //         }
+  //       );
 
-  //     socket.on("notification", (data) => {
-  //       setNotifications((prev) => [data, ...prev]);
-  //     });
-  //   }
-
-  //   return () => {
-  //     socket.off("notification"); // cleanup
+  //       if (res.data?.data?.user) {
+  //         setUserInfo(res.data.data.user);
+  //         localStorage.setItem("userInfo", JSON.stringify(res.data.data.user));
+  //         console.log(
+  //           "✅ Session restored for user:",
+  //           res.data.data.user.username
+  //         );
+  //       }
+  //     } catch (err) {
+  //       console.log("⚠️ No active session:", err.message);
+  //       setUserInfo(null);
+  //       localStorage.removeItem("userInfo");
+  //     } finally {
+  //       setIsReady(true);
+  //     }
   //   };
-  // }, [userInfo]);
+
+  //   verifyUser();
+  // }, []);
+
+  useEffect(() => {
+    const verifyUser = async () => {
+      try {
+        const res = await axios.get("/api/v1/users/profile", {
+          withCredentials: true,
+        });
+
+        if (res.data?.data?.user) {
+          updateUserInfo(res.data.data.user);
+          console.log(
+            "✅ Session restored for user:",
+            res.data.data.user.username
+          );
+        } else {
+          updateUserInfo(null);
+        }
+      } catch (err) {
+        console.log("⚠️ No active session:", err.message);
+        updateUserInfo(null);
+      } finally {
+        setIsReady(true); // mark that verification is done
+      }
+    };
+
+    verifyUser();
+  }, []);
+
+  // ✅ Step 2: Fetch existing notifications after login
+  useEffect(() => {
+    if (!isReady || !userInfo?._id) return;
+
+    const fetchNotifications = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:4000/api/v1/users/notifications/all",
+          { withCredentials: true }
+        );
+        setNotifications(res.data.data || []);
+        console.log("📬 Notifications loaded:", res.data.data?.length);
+      } catch (err) {
+        console.log("❌ Failed to fetch notifications:", err.message);
+      }
+    };
+
+    fetchNotifications();
+  }, [userInfo, isReady]);
+
+  // ✅ Step 3: Handle socket connection & live notifications
+  useEffect(() => {
+    if (!userInfo?._id) return;
+
+    // 🟢 Join instantly if we already have userI nfo (e.g. from localStorage)
+    socket.emit("join", userInfo._id);
+    console.log("🔌 Joined room instantly:", userInfo._id);
+
+    // Rejoin after verification if needed
+    const handleConnect = () => {
+      socket.emit("join", userInfo._id);
+      console.log("🔁 Socket reconnected and joined:", userInfo._id);
+    };
+
+    socket.on("connect", handleConnect);
+
+    // 🎯 Listen for all types of real-time notifications
+    socket.on("newNotification", (data) => {
+      setNotifications((prev) => [
+        {
+          message: `${data.sender} uploaded: ${data.videoTitle}`,
+          videoId: data.videoId,
+          thumbnail: data.thumbnail,
+          timestamp: new Date(),
+        },
+        ...prev,
+      ]);
+    });
+
+    // Cleanup on unmount or logout
+    return () => {
+      socket.off("connect", handleConnect);
+      socket.off("newNotification");
+      if (userInfo?._id) socket.emit("leave", userInfo._id);
+    };
+  }, [userInfo]);
 
   return (
     <AuthContext.Provider
-      value={{ userInfo, setUserInfo: updateUserInfo /*notifications*/ }}
+      value={{
+        userInfo,
+        setUserInfo: updateUserInfo,
+        notifications,
+        setNotifications,
+        isReady,
+      }}
     >
       {children}
     </AuthContext.Provider>
   );
 };
+
+// export const AuthProvider = ({ children }) => {
+//   const [userInfo, setUserInfo] = useState(() => {
+//     const stored = localStorage.getItem("userInfo");
+//     return stored ? JSON.parse(stored) : null;
+//   });
+//   const [isReady, setIsReady] = useState(false); // indicates session check done
+
+//   const updateUserInfo = (info) => {
+//     setUserInfo(info);
+//     if (info) {
+//       localStorage.setItem("userInfo", JSON.stringify(info));
+//     } else {
+//       localStorage.removeItem("userInfo");
+//     }
+//   };
+
+//   // verify session on mount
+//   useEffect(() => {
+//     const verifyUser = async () => {
+//       try {
+//         const res = await axios.get(
+//           "http://localhost:4000/api/v1/users/profile",
+//           { withCredentials: true }
+//         );
+//         if (res.data?.data?.user) {
+//           updateUserInfo(res.data.data.user);
+//           console.log("✅ Session restored:", res.data.data.user.username);
+//         } else {
+//           updateUserInfo(null);
+//         }
+//       } catch (err) {
+//         console.log("⚠️ No active session:", err.message);
+//         updateUserInfo(null);
+//       } finally {
+//         setIsReady(true);
+//       }
+//     };
+
+//     verifyUser();
+//   }, []);
+
+//   return (
+//     <AuthContext.Provider
+//       value={{ userInfo, setUserInfo: updateUserInfo, isReady }}
+//     >
+//       {children}
+//     </AuthContext.Provider>
+//   );
+// };
 
 export const useAuth = () => useContext(AuthContext);
