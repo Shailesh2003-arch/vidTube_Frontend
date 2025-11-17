@@ -2,6 +2,7 @@ import { usePlaylist } from "../../hooks/usePlaylist";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import api from "../../api/axios";
 
 export const AddToPlaylist = ({ isOpen, onClose, videoId }) => {
   const [selectedPlaylist, setSelectedPlaylist] = useState("");
@@ -16,24 +17,23 @@ export const AddToPlaylist = ({ isOpen, onClose, videoId }) => {
   }, [isOpen]);
 
   const handleAdd = async () => {
-    if (!selectedPlaylist) return alert("Please select a Playlist");
+    if (!selectedPlaylist) {
+      return alert("Please select a Playlist");
+    }
+
     try {
-      const res = await fetch(
-        `http://localhost:4000/api/v1/users/playlist/add/${selectedPlaylist}/${videoId}`,
-        {
-          credentials: "include",
-          method: "PATCH",
-          body: JSON.stringify({ videoId }),
-        }
+      const res = await api.patch(
+        `/playlists/add/${selectedPlaylist}/${videoId}`,
+        { videoId } // body
       );
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to add video");
+
       toast.success("Video added successfully ✅");
-      console.log("Video added successfully ✅", data);
+      console.log("Video added successfully", res.data);
+
       onClose();
     } catch (error) {
       toast.error(error.message || "Failed adding video to the playlist");
-      console.log(`Error adding video to the playlist`, error.message);
+      console.log("Error adding video to playlist:", error.message);
     }
   };
 
