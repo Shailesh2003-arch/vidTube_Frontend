@@ -48,8 +48,8 @@ export const TweetCard = ({ tweet, onEdit, onDelete }) => {
           <div className="absolute right-0 mt-2 w-28 bg-white dark:bg-gray-900 shadow-lg rounded-md z-10">
             <button
               onClick={() => {
-                // onEdit(tweet);
-                // setIsOpen(false);
+                onEdit(tweet);
+                setIsOpen(false);
               }}
               className="block w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
             >
