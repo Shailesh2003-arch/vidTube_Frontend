@@ -20,10 +20,10 @@ import { useAuth } from "./contexts/AuthContext";
 import PlaylistPage from "./pages/Playlist/PlayListPage";
 
 function App() {
-  const { isReady, userInfo } = useAuth();
+  const { isReady, userInfo, isVerifying } = useAuth();
 
   // Only show loader if we expected a session (based on localStorage)
-  if (!isReady && localStorage.getItem("userInfo")) {
+  if (isVerifying && !userInfo) {
     return (
       <div className="min-h-screen flex items-center justify-center text-lg">
         Checking session...

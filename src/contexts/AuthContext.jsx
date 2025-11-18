@@ -199,6 +199,119 @@ AuthContext.displayName = "AuthContext";
 //   );
 // };
 
+// export const AuthProvider = ({ children }) => {
+//   const [userInfo, setUserInfo] = useState(() => {
+//     const stored = localStorage.getItem("userInfo");
+//     return stored ? JSON.parse(stored) : null;
+//   });
+
+//   const [notifications, setNotifications] = useState([]);
+//   const [isReady, setIsReady] = useState(false);
+
+//   // Sync state + localStorage
+//   const updateUserInfo = (info) => {
+//     setUserInfo(info);
+//     if (info) {
+//       localStorage.setItem("userInfo", JSON.stringify(info));
+//     } else {
+//       localStorage.removeItem("userInfo");
+//     }
+//   };
+
+//   // 1️⃣ Session Restore Logic
+//   useEffect(() => {
+//     // If user already present in localStorage → skip backend check
+//     if (userInfo) {
+//       setIsReady(true);
+//       return;
+//     }
+
+//     const restoreSession = async () => {
+//       try {
+//         const res = await api.get("/api/v1/users/profile");
+
+//         if (res.data?.data?.user) {
+//           updateUserInfo(res.data.data.user);
+//           console.log("Session restored:", res.data.data.username);
+//         } else {
+//           updateUserInfo(null);
+//         }
+//       } catch (err) {
+//         console.log("No active session:", err.message);
+//         updateUserInfo(null);
+//       } finally {
+//         setIsReady(true);
+//       }
+//     };
+
+//     restoreSession();
+//   }, []);
+
+//   // 2️⃣ Fetch Notifications After User Load
+//   useEffect(() => {
+//     if (!isReady || !userInfo?._id) return;
+
+//     const fetchNotifications = async () => {
+//       try {
+//         const res = await api.get("/api/v1/users/notifications/all");
+//         setNotifications(res.data.data || []);
+//         console.log("Notifications loaded:", res.data.data?.length);
+//       } catch (err) {
+//         console.log("Failed to fetch notifications:", err.message);
+//       }
+//     };
+
+//     fetchNotifications();
+//   }, [userInfo, isReady]);
+
+//   // 3️⃣ Handle Socket Connections for Logged-in Users
+//   useEffect(() => {
+//     if (!userInfo?._id) return;
+
+//     socket.emit("join", userInfo._id);
+//     console.log("Joined socket room:", userInfo._id);
+
+//     const handleConnect = () => {
+//       socket.emit("join", userInfo._id);
+//       console.log("Reconnected & rejoined:", userInfo._id);
+//     };
+
+//     socket.on("connect", handleConnect);
+
+//     socket.on("newNotification", (data) => {
+//       setNotifications((prev) => [
+//         {
+//           message: `${data.sender} uploaded: ${data.videoTitle}`,
+//           videoId: data.videoId,
+//           thumbnail: data.thumbnail,
+//           timestamp: new Date(),
+//         },
+//         ...prev,
+//       ]);
+//     });
+
+//     return () => {
+//       socket.off("connect", handleConnect);
+//       socket.off("newNotification");
+//       socket.emit("leave", userInfo._id);
+//     };
+//   }, [userInfo]);
+
+//   return (
+//     <AuthContext.Provider
+//       value={{
+//         userInfo,
+//         setUserInfo: updateUserInfo,
+//         notifications,
+//         setNotifications,
+//         isReady,
+//       }}
+//     >
+//       {children}
+//     </AuthContext.Provider>
+//   );
+// };
+
 export const AuthProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState(() => {
     const stored = localStorage.getItem("userInfo");
@@ -207,8 +320,8 @@ export const AuthProvider = ({ children }) => {
 
   const [notifications, setNotifications] = useState([]);
   const [isReady, setIsReady] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(true); // 🔥 real check begins
 
-  // Sync state + localStorage
   const updateUserInfo = (info) => {
     setUserInfo(info);
     if (info) {
@@ -218,36 +331,31 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // 1️⃣ Session Restore Logic
+  // 🔥 1) Verify session on first page load ONLY
   useEffect(() => {
-    // If user already present in localStorage → skip backend check
-    if (userInfo) {
-      setIsReady(true);
-      return;
-    }
+    const verifyUser = async () => {
+      setIsVerifying(true);
 
-    const restoreSession = async () => {
       try {
         const res = await api.get("/api/v1/users/profile");
 
         if (res.data?.data?.user) {
           updateUserInfo(res.data.data.user);
-          console.log("Session restored:", res.data.data.username);
         } else {
           updateUserInfo(null);
         }
-      } catch (err) {
-        console.log("No active session:", err.message);
+      } catch {
         updateUserInfo(null);
       } finally {
         setIsReady(true);
+        setIsVerifying(false); // 🔥 verification finished
       }
     };
 
-    restoreSession();
+    verifyUser();
   }, []);
 
-  // 2️⃣ Fetch Notifications After User Load
+  // 🔥 2) Fetch notifications only if logged in
   useEffect(() => {
     if (!isReady || !userInfo?._id) return;
 
@@ -255,7 +363,6 @@ export const AuthProvider = ({ children }) => {
       try {
         const res = await api.get("/api/v1/users/notifications/all");
         setNotifications(res.data.data || []);
-        console.log("Notifications loaded:", res.data.data?.length);
       } catch (err) {
         console.log("Failed to fetch notifications:", err.message);
       }
@@ -264,19 +371,17 @@ export const AuthProvider = ({ children }) => {
     fetchNotifications();
   }, [userInfo, isReady]);
 
-  // 3️⃣ Handle Socket Connections for Logged-in Users
+  // 🔥 3) Socket connection
   useEffect(() => {
     if (!userInfo?._id) return;
 
     socket.emit("join", userInfo._id);
-    console.log("Joined socket room:", userInfo._id);
 
-    const handleConnect = () => {
+    const handleReconnect = () => {
       socket.emit("join", userInfo._id);
-      console.log("Reconnected & rejoined:", userInfo._id);
     };
 
-    socket.on("connect", handleConnect);
+    socket.on("connect", handleReconnect);
 
     socket.on("newNotification", (data) => {
       setNotifications((prev) => [
@@ -291,7 +396,7 @@ export const AuthProvider = ({ children }) => {
     });
 
     return () => {
-      socket.off("connect", handleConnect);
+      socket.off("connect", handleReconnect);
       socket.off("newNotification");
       socket.emit("leave", userInfo._id);
     };
@@ -305,6 +410,7 @@ export const AuthProvider = ({ children }) => {
         notifications,
         setNotifications,
         isReady,
+        isVerifying, // 🔥 export this for loader logic
       }}
     >
       {children}
