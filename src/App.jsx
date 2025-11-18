@@ -20,15 +20,17 @@ import { useAuth } from "./contexts/AuthContext";
 import PlaylistPage from "./pages/Playlist/PlayListPage";
 
 function App() {
-  const { isReady } = useAuth();
+  const { isReady, userInfo } = useAuth();
 
-  if (!isReady) {
+  // Only show loader if we expected a session (based on localStorage)
+  if (!isReady && localStorage.getItem("userInfo")) {
     return (
       <div className="min-h-screen flex items-center justify-center text-lg">
         Checking session...
       </div>
     );
   }
+
   return (
     <>
       <Routes>
@@ -37,8 +39,7 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
-        {/* Protected /feed routes with layout */}
-
+        {/* Protected /feed routes */}
         <Route path="/feed" element={<FeedLayout />}>
           <Route path="homepage" element={<HomePage />} />
           <Route path="watch/:videoId" element={<WatchPage />} />
@@ -49,9 +50,10 @@ function App() {
           <Route path="history" element={<HistoryPage />} />
           <Route path="channel/:username" element={<ChannelPage />} />
         </Route>
+
         <Route path="/playlists/:playlistId" element={<PlaylistPage />} />
 
-        {/* studio */}
+        {/* Studio */}
         <Route path="/studio" element={<StudioLayout />}>
           <Route path="videos" element={<VideosPage />} />
           <Route
