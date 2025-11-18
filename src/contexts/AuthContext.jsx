@@ -232,7 +232,7 @@ export const AuthProvider = ({ children }) => {
 
         if (res.data?.data?.user) {
           updateUserInfo(res.data.data.user);
-          console.log("Session restored:", res.data.data.user.username);
+          console.log("Session restored:", res.data.data.username);
         } else {
           updateUserInfo(null);
         }
