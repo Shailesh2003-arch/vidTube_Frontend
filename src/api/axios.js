@@ -70,6 +70,7 @@ api.interceptors.response.use(
 
       try {
         // THIS IS THE FIX 👇
+        console.log(`Making request to refresh token endpoint`);
         await api.post(
           "/api/v1/users/refresh-token",
           {},
