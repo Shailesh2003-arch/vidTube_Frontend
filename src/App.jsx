@@ -20,10 +20,10 @@ import { useAuth } from "./contexts/AuthContext";
 import PlaylistPage from "./pages/Playlist/PlayListPage";
 
 function App() {
-  const { isReady, userInfo, isVerifying } = useAuth();
+  const { isReady, userInfo } = useAuth();
 
-  // Only show loader if we expected a session (based on localStorage)
-  if (isVerifying && !userInfo) {
+  // Only show loader if we are restoring a session and userInfo was empty initially
+  if (!isReady && !userInfo) {
     return (
       <div className="min-h-screen flex items-center justify-center text-lg">
         Checking session...
@@ -35,11 +35,12 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Navigate to="/register" replace />} />
+
         <Route path="/register" element={<AuthForm />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
-        {/* Protected /feed routes */}
+        {/* Protected Feed */}
         <Route path="/feed" element={<FeedLayout />}>
           <Route path="homepage" element={<HomePage />} />
           <Route path="watch/:videoId" element={<WatchPage />} />

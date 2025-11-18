@@ -312,18 +312,24 @@ AuthContext.displayName = "AuthContext";
 //   );
 // };
 
+// ✅ CLEAN + FLICKER-FREE AUTH PROVIDER
+
 export const AuthProvider = ({ children }) => {
-  const [userInfo, setUserInfo] = useState(() => {
-    const stored = localStorage.getItem("userInfo");
-    return stored ? JSON.parse(stored) : null;
-  });
+  // ---- 1) Load from LocalStorage immediately (synchronous) ----
+  const stored = localStorage.getItem("userInfo");
+  const initialUser = stored ? JSON.parse(stored) : null;
+
+  const [userInfo, setUserInfo] = useState(initialUser);
+
+  // If userInfo exists → we’re already "ready"
+  const [isReady, setIsReady] = useState(!!initialUser);
 
   const [notifications, setNotifications] = useState([]);
-  const [isReady, setIsReady] = useState(false);
-  const [isVerifying, setIsVerifying] = useState(true); // 🔥 real check begins
 
+  // ---- Helper: update LS + state ----
   const updateUserInfo = (info) => {
     setUserInfo(info);
+
     if (info) {
       localStorage.setItem("userInfo", JSON.stringify(info));
     } else {
@@ -331,11 +337,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // 🔥 1) Verify session on first page load ONLY
+  // ---- 2) If NO local user → try session restore ----
   useEffect(() => {
-    const verifyUser = async () => {
-      setIsVerifying(true);
+    if (initialUser) return; // user already known → no restore needed
 
+    const restoreSession = async () => {
       try {
         const res = await api.get("/api/v1/users/profile");
 
@@ -344,18 +350,17 @@ export const AuthProvider = ({ children }) => {
         } else {
           updateUserInfo(null);
         }
-      } catch {
+      } catch (err) {
         updateUserInfo(null);
       } finally {
         setIsReady(true);
-        setIsVerifying(false); // 🔥 verification finished
       }
     };
 
-    verifyUser();
+    restoreSession();
   }, []);
 
-  // 🔥 2) Fetch notifications only if logged in
+  // ---- 3) Fetch notifications *after* user is loaded & ready ----
   useEffect(() => {
     if (!isReady || !userInfo?._id) return;
 
@@ -364,24 +369,24 @@ export const AuthProvider = ({ children }) => {
         const res = await api.get("/api/v1/users/notifications/all");
         setNotifications(res.data.data || []);
       } catch (err) {
-        console.log("Failed to fetch notifications:", err.message);
+        console.log("Failed to fetch notifications");
       }
     };
 
     fetchNotifications();
-  }, [userInfo, isReady]);
+  }, [isReady, userInfo]);
 
-  // 🔥 3) Socket connection
+  // ---- 4) Socket handling ----
   useEffect(() => {
     if (!userInfo?._id) return;
 
     socket.emit("join", userInfo._id);
 
-    const handleReconnect = () => {
+    const handleConnect = () => {
       socket.emit("join", userInfo._id);
     };
 
-    socket.on("connect", handleReconnect);
+    socket.on("connect", handleConnect);
 
     socket.on("newNotification", (data) => {
       setNotifications((prev) => [
@@ -396,12 +401,13 @@ export const AuthProvider = ({ children }) => {
     });
 
     return () => {
-      socket.off("connect", handleReconnect);
+      socket.off("connect", handleConnect);
       socket.off("newNotification");
       socket.emit("leave", userInfo._id);
     };
   }, [userInfo]);
 
+  // ---- 5) Provider Context ----
   return (
     <AuthContext.Provider
       value={{
@@ -410,7 +416,6 @@ export const AuthProvider = ({ children }) => {
         notifications,
         setNotifications,
         isReady,
-        isVerifying, // 🔥 export this for loader logic
       }}
     >
       {children}
